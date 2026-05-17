@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sentry API — Spring Boot Auth Starter · Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800;900&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cortex.css">
+<style>
+  /* Top crumb */
+  .crumb-bar{max-width:1180px;margin:20px auto 0;padding:0 28px;font-size:13px;font-weight:700;color:var(--ink-soft);position:relative;z-index:2}
+  .crumb-bar a{transition:.2s}
+  .crumb-bar a:hover{color:var(--ink)}
+  .crumb-bar b{color:var(--ink)}
+
+  /* Hero split */
+  .pd-hero{
+    max-width:1180px;margin:24px auto;padding:0 28px;display:grid;grid-template-columns:1.3fr 1fr;gap:34px;position:relative;z-index:2;
+  }
+  .gallery{display:flex;flex-direction:column;gap:14px}
+  .gallery .main-img{
+    background:#fff;border-radius:24px;padding:30px;aspect-ratio:1.5/1;display:grid;place-items:center;
+    box-shadow:6px 6px 0 rgba(0,0,0,.08);
+  }
+  .gallery .main-img svg{width:100%;height:100%}
+  .thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .thumbs .t{
+    background:#fff;border-radius:14px;padding:10px;aspect-ratio:1.4/1;cursor:pointer;border:3px solid transparent;transition:.2s;
+    display:grid;place-items:center;
+  }
+  .thumbs .t.on{border-color:var(--ink)}
+  .thumbs .t:hover{transform:translateY(-2px)}
+  .thumbs .t svg{width:100%}
+
+  /* Right purchase card */
+  .pd-right{display:flex;flex-direction:column;gap:18px;position:sticky;top:24px;align-self:flex-start}
+  .pd-title-card{background:#fff;border-radius:22px;padding:28px}
+  .pd-title-card .cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .pd-title-card .cats span{background:var(--cream);font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;letter-spacing:.4px;text-transform:uppercase}
+  .pd-title-card h1{margin:0 0 12px;font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1.1}
+  .pd-title-card .author-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft);margin-bottom:16px}
+  .pd-title-card .author-row .av{width:36px;height:36px;border-radius:50%;background:var(--coral);display:grid;place-items:center;font-weight:900;font-size:14px;color:var(--ink)}
+  .pd-title-card .author-row b{color:var(--ink)}
+  .pd-title-card .rate{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px dashed rgba(0,0,0,.12);border-bottom:1px dashed rgba(0,0,0,.12);margin-bottom:18px}
+  .pd-title-card .rate .stars{color:var(--coral);letter-spacing:2px;font-weight:900}
+  .pd-title-card .rate .sub{font-size:13px;color:var(--ink-soft);font-weight:700}
+  .pd-title-card .pricing-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px}
+  .pd-title-card .price{font-size:46px;font-weight:900;letter-spacing:-1.5px;color:var(--ink);line-height:1}
+  .pd-title-card .old{font-size:18px;color:var(--ink-soft);text-decoration:line-through;font-weight:700;margin-right:10px}
+  .pd-title-card .save{background:var(--coral);color:var(--ink);font-size:11px;font-weight:900;padding:5px 10px;border-radius:999px;letter-spacing:.4px;text-transform:uppercase}
+  .pd-title-card .license{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .pd-title-card .license button{
+    background:var(--soft);border:none;padding:14px 16px;border-radius:14px;cursor:pointer;font-family:inherit;text-align:left;flex:1;min-width:140px;
+    transition:.2s;
+  }
+  .pd-title-card .license button.on{background:var(--cream);outline:2px solid var(--ink)}
+  .pd-title-card .license .lbl{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:4px}
+  .pd-title-card .license .val{font-weight:900;font-size:15px;letter-spacing:-.3px}
+  .pd-title-card .ctas{display:flex;gap:10px;margin-bottom:14px}
+  .pd-title-card .ctas .btn{flex:1;justify-content:center;padding:14px}
+  .pd-title-card .ctas .icn{flex:none;width:48px;height:48px;border-radius:14px;background:var(--soft);border:none;cursor:pointer;display:grid;place-items:center;transition:.2s}
+  .pd-title-card .ctas .icn:hover{background:var(--cream)}
+  .pd-title-card .feature-line{display:flex;gap:10px;align-items:center;font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:6px}
+  .pd-title-card .feature-line::before{content:'';width:18px;height:18px;border-radius:5px;background:var(--ink);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F7C945' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12 L10 17 L19 7'/></svg>");background-size:80%;background-position:center;background-repeat:no-repeat;flex-shrink:0}
+
+  .quick-stats{background:var(--ink);color:#fff;border-radius:18px;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .quick-stats .s .n{font-size:22px;font-weight:900;color:var(--yellow);letter-spacing:-.5px;line-height:1}
+  .quick-stats .s .l{font-size:11px;opacity:.65;text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
+
+  /* Tabs */
+  .tab-bar{
+    background:#fff;border-radius:18px;padding:8px;display:flex;gap:4px;flex-wrap:wrap;margin:30px 0 22px;
+    position:sticky;top:14px;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.04);
+  }
+  .tab-btn{
+    background:transparent;border:none;padding:12px 22px;border-radius:14px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:.2s;
+    color:var(--ink-soft);
+  }
+  .tab-btn.on{background:var(--ink);color:var(--yellow)}
+  .tab-btn:hover:not(.on){background:var(--soft);color:var(--ink)}
+
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+  /* Content blocks */
+  .content-card{background:#fff;border-radius:22px;padding:36px;margin-bottom:22px}
+  .content-card h2{font-size:26px;font-weight:900;letter-spacing:-.7px;margin:0 0 16px}
+  .content-card h3{font-size:18px;font-weight:900;letter-spacing:-.4px;margin:24px 0 10px}
+  .content-card p{font-size:15px;color:var(--ink-soft);line-height:1.65;margin:0 0 14px}
+  .content-card ul{padding-left:0;list-style:none;display:grid;gap:8px;margin:0 0 14px}
+  .content-card ul li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink)}
+  .content-card ul li::before{content:'';width:18px;height:18px;border-radius:5px;background:var(--ink);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F7C945' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12 L10 17 L19 7'/></svg>");background-size:80%;background-position:center;background-repeat:no-repeat;flex-shrink:0;margin-top:2px}
+  .content-card pre{
+    background:var(--ink);color:#fff;border-radius:14px;padding:22px;font-family:'Menlo','Monaco',monospace;font-size:13px;line-height:1.6;
+    overflow-x:auto;margin:0 0 14px;
+  }
+  .content-card pre .k{color:#FF7A59}
+  .content-card pre .s{color:#F7C945}
+  .content-card pre .c{color:#6FA8FF;opacity:.7}
+  .content-card pre .t{color:#2BC4A8}
+
+  /* Endpoints table */
+  .endpoints{background:var(--paper);border-radius:14px;overflow:hidden}
+  .endpoints table{width:100%;border-collapse:collapse;font-size:13px}
+  .endpoints th, .endpoints td{padding:14px;text-align:left;border-bottom:1px solid var(--soft)}
+  .endpoints thead th{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-soft);font-weight:900}
+  .endpoints tbody td:first-child{font-family:'Menlo',monospace;font-weight:700}
+  .endpoints .verb{display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:900;letter-spacing:.3px;margin-right:8px}
+  .endpoints .v-get{background:#2BC4A8;color:#1B1B1B}
+  .endpoints .v-post{background:#F7C945;color:#1B1B1B}
+  .endpoints .v-put{background:#6FA8FF;color:#1B1B1B}
+  .endpoints .v-del{background:#FF7A59;color:#1B1B1B}
+
+  /* Specs grid */
+  .specs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .spec{background:var(--soft);border-radius:14px;padding:18px}
+  .spec .lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);margin-bottom:6px}
+  .spec .val{font-size:16px;font-weight:900;letter-spacing:-.3px}
+
+  /* Reviews */
+  .reviews-summary{display:grid;grid-template-columns:240px 1fr;gap:30px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--soft);margin-bottom:24px}
+  .rs-big{text-align:center}
+  .rs-big .num{font-size:64px;font-weight:900;line-height:1;letter-spacing:-2px}
+  .rs-big .stars{color:var(--coral);letter-spacing:3px;font-size:18px;margin:8px 0}
+  .rs-big .from{font-size:13px;color:var(--ink-soft);font-weight:700}
+  .rs-bars{display:flex;flex-direction:column;gap:10px}
+  .rs-bar{display:grid;grid-template-columns:60px 1fr 40px;gap:12px;align-items:center;font-size:13px;font-weight:700}
+  .rs-bar .bar{height:8px;border-radius:999px;background:var(--soft);overflow:hidden}
+  .rs-bar .bar span{display:block;height:100%;background:var(--coral);border-radius:999px}
+  .review{padding:20px 0;border-bottom:1px solid var(--soft);display:grid;grid-template-columns:60px 1fr;gap:18px}
+  .review:last-child{border-bottom:none}
+  .review .av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:var(--ink)}
+  .review .nm{font-weight:800;margin-bottom:2px}
+  .review .when{font-size:12px;color:var(--ink-soft);font-weight:700;margin-bottom:6px}
+  .review .stars{color:var(--coral);letter-spacing:2px;font-size:13px;margin-bottom:6px}
+  .review p{margin:0;font-size:14px;color:var(--ink);line-height:1.55}
+
+  /* Author card */
+  .author-card{
+    background:var(--ink);color:#fff;border-radius:24px;padding:30px;display:grid;grid-template-columns:120px 1fr auto;gap:24px;align-items:center;
+    margin-bottom:30px;position:relative;overflow:hidden;
+  }
+  .author-card::before{content:'';position:absolute;width:160px;height:160px;background:var(--yellow);border-radius:50%;right:-60px;top:-60px;opacity:.18}
+  .author-card .av{width:100px;height:100px;border-radius:50%;background:var(--yellow);color:var(--ink);display:grid;place-items:center;font-weight:900;font-size:34px;position:relative}
+  .author-card h4{margin:0 0 4px;font-size:22px;font-weight:900;letter-spacing:-.5px;position:relative}
+  .author-card .auth-meta{font-size:13px;opacity:.7;margin-bottom:12px;position:relative}
+  .author-card .auth-stats{display:flex;gap:18px;font-size:13px;position:relative}
+  .author-card .auth-stats .a{display:flex;flex-direction:column}
+  .author-card .auth-stats .a .nn{font-size:18px;font-weight:900;color:var(--yellow)}
+  .author-card .auth-stats .a .ll{opacity:.6;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+  .author-card .btn{position:relative}
+
+  /* Related products */
+  .related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .related-grid .pcard{background:#fff;border-radius:18px;overflow:hidden;cursor:pointer;transition:.2s}
+  .related-grid .pcard:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.08)}
+  .related-grid .pcard .cover{aspect-ratio:1.5/1;display:grid;place-items:center}
+  .related-grid .pcard .cover svg{width:90%}
+  .related-grid .pcard .body{padding:16px}
+  .related-grid .pcard h5{margin:0 0 6px;font-size:14px;font-weight:900}
+  .related-grid .pcard .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink-soft)}
+  .related-grid .pcard .pr{font-weight:900;color:var(--ink);font-size:16px}
+
+  @media (max-width:900px){
+    .pd-hero{grid-template-columns:1fr}
+    .pd-right{position:static}
+    .specs, .reviews-summary{grid-template-columns:1fr}
+    .author-card{grid-template-columns:1fr}
+    .related-grid{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-prog" id="scrollProg"></div>
+<div class="bg-shapes" aria-hidden="true">
+  <div class="grid-dots" id="gridDots"></div>
+  <div class="blob b1" data-speed="0.18"></div>
+  <div class="blob b2" data-speed="-0.12"></div>
+  <div class="blob b3" data-speed="0.22"></div>
+  <div class="blob b4" data-speed="-0.16"></div>
+</div>
+
+<nav class="top">
+  <a class="logo" href="index.html">
+    <span class="dot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 v6 c0 5 4 9 8 10 c4 -1 8 -5 8 -10 V6 z"/><path d="M9 12 l2 2 l4 -4"/></svg></span>
+    forge
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="products.html" class="active">Products</a>
+    <a href="support.html">Support</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-cta">
+    <a href="#">Sign in</a>
+    <a class="btn dark" href="contact.html">Sell on Forge →</a>
+  </div>
+</nav>
+
+<div class="crumb-bar reveal">
+  <a href="index.html">Home</a> &nbsp;/&nbsp; <a href="products.html">Products</a> &nbsp;/&nbsp; <a href="products.html?c=springboot">Spring Boot</a> &nbsp;/&nbsp; <b>Sentry API — Auth &amp; RBAC Starter</b>
+</div>
+
+<!-- HERO -->
+<section class="pd-hero">
+  <div class="gallery reveal">
+    <div class="main-img" id="mainImg">
+      <svg viewBox="0 0 600 400">
+        <rect x="20" y="20" width="560" height="360" rx="20" fill="#1B1B1B"/>
+        <rect x="20" y="20" width="560" height="36" rx="20" fill="#2a2a2a"/>
+        <rect x="20" y="38" width="560" height="18" fill="#2a2a2a"/>
+        <circle cx="44" cy="38" r="5" fill="#FF7A59"/>
+        <circle cx="60" cy="38" r="5" fill="#F7C945"/>
+        <circle cx="76" cy="38" r="5" fill="#2BC4A8"/>
+        <rect x="220" y="32" width="160" height="14" rx="7" fill="#1B1B1B"/>
+        <rect x="244" y="36" width="110" height="6" rx="2" fill="#F7C945"/>
+        <!-- left sidebar -->
+        <rect x="40" y="80" width="130" height="284" fill="#3a3a3a" rx="6"/>
+        <rect x="56" y="100" width="90" height="22" rx="6" fill="#F7C945"/>
+        <rect x="64" y="106" width="40" height="10" rx="3" fill="#1B1B1B"/>
+        ${[0,1,2,3,4,5].map(i=>`<rect x="56" y="${134+i*30}" width="100" height="18" rx="5" fill="#1B1B1B" opacity=".4"/>`).join('')}
+        <!-- main pane -->
+        <rect x="186" y="80" width="376" height="40" rx="8" fill="#FFE9A8"/>
+        <rect x="200" y="92" width="100" height="8" rx="2" fill="#1B1B1B"/>
+        <rect x="200" y="104" width="240" height="6" rx="2" fill="#1B1B1B" opacity=".55"/>
+        <rect x="500" y="90" width="48" height="20" rx="6" fill="#1B1B1B"/>
+        <!-- code block -->
+        <rect x="186" y="132" width="376" height="124" rx="10" fill="#2a2a2a"/>
+        ${[0,1,2,3,4,5,6].map(i=>`
+          <rect x="200" y="${146+i*15}" width="${[50,80,40,100,60,90,40][i]}" height="6" rx="2" fill="${['#FF7A59','#F7C945','#6FA8FF','#fff','#2BC4A8','#8B7CF6','#FF7A59'][i]}" opacity="${[1,1,1,.5,1,1,1][i]}"/>
+          <rect x="${260+(i%3)*70}" y="${146+i*15}" width="${[80,40,120,80,90,60,90][i]}" height="6" rx="2" fill="#fff" opacity=".6"/>
+        `).join('')}
+        <!-- right panel: success states -->
+        <rect x="186" y="268" width="180" height="96" rx="10" fill="#2BC4A8"/>
+        <text x="200" y="296" font-family="DM Sans" font-weight="900" font-size="14" fill="#1B1B1B">✓ 142 / 144 tests</text>
+        <text x="200" y="320" font-family="DM Sans" font-weight="700" font-size="11" fill="#1B1B1B" opacity=".7">coverage: 94%</text>
+        <rect x="200" y="332" width="120" height="20" rx="6" fill="#1B1B1B"/>
+        <text x="260" y="346" text-anchor="middle" font-family="DM Sans" font-weight="900" font-size="11" fill="#F7C945">RUN AGAIN ↻</text>
+        <rect x="376" y="268" width="186" height="96" rx="10" fill="#FF7A59"/>
+        <rect x="390" y="282" width="60" height="6" rx="2" fill="#1B1B1B"/>
+        <text x="390" y="320" font-family="DM Sans" font-weight="900" font-size="22" fill="#1B1B1B">$ docker</text>
+        <text x="390" y="346" font-family="DM Sans" font-weight="900" font-size="22" fill="#1B1B1B">compose up</text>
+      </svg>
+    </div>
+    <div class="thumbs">
+      <div class="t on">
+        <svg viewBox="0 0 200 130"><rect width="200" height="130" rx="8" fill="#1B1B1B"/><rect x="20" y="20" width="100" height="10" rx="3" fill="#F7C945"/><rect x="20" y="40" width="160" height="60" rx="6" fill="#3a3a3a"/></svg>
+      </div>
+      <div class="t">
+        <svg viewBox="0 0 200 130"><rect width="200" height="130" rx="8" fill="#FFE9A8"/><circle cx="60" cy="60" r="30" fill="#FF7A59"/><rect x="100" y="40" width="80" height="14" rx="4" fill="#1B1B1B"/><rect x="100" y="60" width="60" height="40" rx="6" fill="#1B1B1B"/></svg>
+      </div>
+      <div class="t">
+        <svg viewBox="0 0 200 130"><rect width="200" height="130" rx="8" fill="#FF8FA3"/><rect x="20" y="20" width="160" height="20" rx="6" fill="#1B1B1B"/><rect x="20" y="50" width="60" height="60" rx="6" fill="#FFFDF6"/><rect x="90" y="50" width="90" height="60" rx="6" fill="#1B1B1B"/></svg>
+      </div>
+      <div class="t">
+        <svg viewBox="0 0 200 130"><rect width="200" height="130" rx="8" fill="#6FA8FF"/><circle cx="80" cy="60" r="14" fill="#F7C945"/><circle cx="140" cy="60" r="14" fill="#FF7A59"/><line x1="80" y1="60" x2="140" y2="60" stroke="#1B1B1B" stroke-width="3"/></svg>
+      </div>
+      <div class="t">
+        <svg viewBox="0 0 200 130"><rect width="200" height="130" rx="8" fill="#2BC4A8"/><polyline points="20,90 60,70 100,80 140,50 180,60" stroke="#1B1B1B" stroke-width="3" fill="none"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <aside class="pd-right reveal d2">
+    <div class="pd-title-card">
+      <div class="cats">
+        <span>Spring Boot</span>
+        <span>Java 21</span>
+        <span>Backend</span>
+      </div>
+      <h1>Sentry API — Auth &amp; RBAC Starter</h1>
+      <div class="author-row">
+        <div class="av">SF</div>
+        <div>By <b>SpringForge</b> · 14 builds on Forge · Top 1% author</div>
+      </div>
+      <div class="rate">
+        <span class="stars">★★★★★</span>
+        <span style="font-weight:900;font-size:18px">4.9</span>
+        <span class="sub">412 reviews · 3,840 downloads</span>
+      </div>
+      <div class="pricing-row">
+        <div>
+          <span class="old">$89</span>
+          <span class="price">$59</span>
+        </div>
+        <span class="save">Save 33%</span>
+      </div>
+      <div class="license">
+        <button class="on" type="button">
+          <span class="lbl">Regular License</span>
+          <span class="val">$59</span>
+        </button>
+        <button type="button">
+          <span class="lbl">Extended License</span>
+          <span class="val">$249</span>
+        </button>
+      </div>
+      <div class="ctas">
+        <a class="btn dark" href="#">Buy now → $59</a>
+        <button class="icn" aria-label="Wishlist">♡</button>
+        <button class="icn" aria-label="Share">↗</button>
+      </div>
+      <div class="feature-line">6 months free updates included</div>
+      <div class="feature-line">Future updates from author</div>
+      <div class="feature-line">Quality checked by Forge</div>
+      <div class="feature-line">Full source code &amp; tests</div>
+      <div class="feature-line">14-day refund guarantee</div>
+    </div>
+
+    <div class="quick-stats">
+      <div class="s"><div class="n">v3.4.1</div><div class="l">Latest version</div></div>
+      <div class="s"><div class="n">May 16, 2026</div><div class="l">Updated</div></div>
+      <div class="s"><div class="n">42 MB</div><div class="l">Size</div></div>
+      <div class="s"><div class="n">Java 21</div><div class="l">Min JDK</div></div>
+    </div>
+  </aside>
+</section>
+
+<!-- TABS -->
+<div class="wrap" style="padding-top:24px">
+  <div class="tab-bar reveal" role="tablist">
+    <button class="tab-btn on" data-t="overview">Overview</button>
+    <button class="tab-btn" data-t="features">Features</button>
+    <button class="tab-btn" data-t="api">API reference</button>
+    <button class="tab-btn" data-t="setup">Setup</button>
+    <button class="tab-btn" data-t="changelog">Changelog</button>
+    <button class="tab-btn" data-t="reviews">Reviews · 412</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="tab-panel on" data-p="overview">
+    <div class="content-card reveal">
+      <h2>About this build</h2>
+      <p>Sentry API is a production-ready authentication and authorisation starter for Spring Boot 3.2+. Drop it into any new or existing project and ship JWT auth, OAuth2 (Google, GitHub, Microsoft), role-based access control, audit logging and rate-limiting in under an hour.</p>
+      <p>Built by SpringForge — the team behind 14 of Forge's top-rated backend builds, now used in production by 3,800+ teams including FinTech, HealthTech and govtech orgs across 6 continents.</p>
+
+      <h3>What's inside the .zip</h3>
+      <ul>
+        <li>Spring Boot 3.2 + Java 21 monorepo with Gradle Kotlin DSL</li>
+        <li>JWT issuer + refresh token rotation (RS256, JWKs endpoint)</li>
+        <li>OAuth2 social login: Google, GitHub, Microsoft, Apple</li>
+        <li>Role-based access control with hierarchical permissions</li>
+        <li>Argon2id password hashing (zero-config defaults)</li>
+        <li>Audit log table + Kafka emitter for SIEM streaming</li>
+        <li>Rate limiting (Bucket4j) with Redis-backed sliding window</li>
+        <li>Docker Compose for Postgres, Redis, Mailpit</li>
+        <li>Postman collection &amp; OpenAPI 3 spec</li>
+        <li>92% line coverage · JUnit 5 + Testcontainers</li>
+        <li>GitHub Actions CI workflow included</li>
+        <li>Complete deployment guides (Render, Fly.io, AWS ECS)</li>
+      </ul>
+
+      <h3>Technical specifications</h3>
+      <div class="specs">
+        <div class="spec"><div class="lbl">Framework</div><div class="val">Spring Boot 3.2</div></div>
+        <div class="spec"><div class="lbl">Language</div><div class="val">Java 21 (LTS)</div></div>
+        <div class="spec"><div class="lbl">Build tool</div><div class="val">Gradle 8.5 (KTS)</div></div>
+        <div class="spec"><div class="lbl">Database</div><div class="val">PostgreSQL 16</div></div>
+        <div class="spec"><div class="lbl">Cache</div><div class="val">Redis 7</div></div>
+        <div class="spec"><div class="lbl">Message bus</div><div class="val">Kafka 3.6 (optional)</div></div>
+        <div class="spec"><div class="lbl">Test coverage</div><div class="val">92% line · 88% branch</div></div>
+        <div class="spec"><div class="lbl">Docker</div><div class="val">Multi-arch (amd64, arm64)</div></div>
+        <div class="spec"><div class="lbl">License</div><div class="val">Regular / Extended</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="tab-panel" data-p="features">
+    <div class="content-card reveal">
+      <h2>Feature highlights</h2>
+      <p>Every feature ships fully wired into the demo app — clone, run, and click around. No "exercise left to the reader" code.</p>
+
+      <h3>🔐 Authentication</h3>
+      <ul>
+        <li>Email + password sign-up with email verification flow</li>
+        <li>Argon2id password hashing with configurable cost</li>
+        <li>JWT access tokens (RS256) + opaque refresh tokens</li>
+        <li>WebAuthn / passkeys support out of the box</li>
+        <li>Magic link sign-in (Mailpit dev, SendGrid prod)</li>
+        <li>OAuth2 social: Google, GitHub, Microsoft, Apple, LinkedIn</li>
+      </ul>
+
+      <h3>👤 Authorization &amp; RBAC</h3>
+      <ul>
+        <li>Hierarchical role &amp; permission system</li>
+        <li>Method-level @PreAuthorize annotations with custom SpEL</li>
+        <li>Per-tenant scoping for multi-tenant SaaS use</li>
+        <li>Row-level security helpers for Postgres</li>
+      </ul>
+
+      <h3>🛡 Security &amp; compliance</h3>
+      <ul>
+        <li>OWASP-aligned defaults (CSRF, CORS, headers, rate limits)</li>
+        <li>2FA via TOTP (Google Authenticator, 1Password)</li>
+        <li>Brute-force protection with Redis sliding window</li>
+        <li>Full audit trail of every auth event</li>
+        <li>SOC 2 evidence-friendly logging format</li>
+      </ul>
+
+      <h3>📊 Operations</h3>
+      <ul>
+        <li>Spring Actuator endpoints (health, metrics, prometheus)</li>
+        <li>Structured JSON logs (Logback + Logstash encoder)</li>
+        <li>Open-telemetry instrumentation included</li>
+        <li>One-line Sentry.io error tracking</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- API -->
+  <div class="tab-panel" data-p="api">
+    <div class="content-card reveal">
+      <h2>API reference</h2>
+      <p>17 endpoints out of the box. Full OpenAPI 3 spec, Postman collection and Bruno collection included in the download.</p>
+
+      <div class="endpoints">
+        <table>
+          <thead><tr><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+          <tbody>
+            <tr><td><span class="verb v-post">POST</span>/auth/signup</td><td>Create a new user account</td><td>Public</td></tr>
+            <tr><td><span class="verb v-post">POST</span>/auth/login</td><td>Email + password sign-in</td><td>Public</td></tr>
+            <tr><td><span class="verb v-post">POST</span>/auth/refresh</td><td>Rotate refresh token</td><td>Refresh token</td></tr>
+            <tr><td><span class="verb v-post">POST</span>/auth/logout</td><td>Revoke current session</td><td>Bearer</td></tr>
+            <tr><td><span class="verb v-get">GET</span>/auth/me</td><td>Current user profile</td><td>Bearer</td></tr>
+            <tr><td><span class="verb v-post">POST</span>/auth/2fa/setup</td><td>Begin TOTP enrollment</td><td>Bearer</td></tr>
+            <tr><td><span class="verb v-post">POST</span>/auth/2fa/verify</td><td>Verify enrollment code</td><td>Bearer</td></tr>
+            <tr><td><span class="verb v-get">GET</span>/users</td><td>List users (paginated)</td><td>admin:read</td></tr>
+            <tr><td><span class="verb v-get">GET</span>/users/{'{'}id{'}'}</td><td>Get user by id</td><td>admin:read</td></tr>
+            <tr><td><span class="verb v-put">PUT</span>/users/{'{'}id{'}'}/role</td><td>Update user role</td><td>admin:write</td></tr>
+            <tr><td><span class="verb v-del">DEL</span>/users/{'{'}id{'}'}</td><td>Soft-delete user</td><td>admin:delete</td></tr>
+            <tr><td><span class="verb v-get">GET</span>/audit-log</td><td>Stream audit events</td><td>admin:read</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Example: sign in</h3>
+      <pre><span class="k">curl</span> -X <span class="k">POST</span> https://api.example.com<span class="s">/auth/login</span> \\
+  -H <span class="s">"Content-Type: application/json"</span> \\
+  -d <span class="s">'{ "email": "you@company.com", "password": "•••••" }'</span>
+
+<span class="c"># 200 OK</span>
+{
+  <span class="s">"accessToken"</span>: <span class="s">"eyJhbGciOi…"</span>,
+  <span class="s">"refreshToken"</span>: <span class="s">"a3f7…"</span>,
+  <span class="s">"user"</span>: { <span class="s">"id"</span>: <span class="t">42</span>, <span class="s">"email"</span>: <span class="s">"you@company.com"</span> }
+}</pre>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div class="tab-panel" data-p="setup">
+    <div class="content-card reveal">
+      <h2>Setup &amp; deploy</h2>
+      <p>From <code>git clone</code> to running locally: about 4 minutes. From local to a deployed staging environment: about 14.</p>
+
+      <h3>① Local development</h3>
+      <pre><span class="k">git</span> clone https://github.com/your-org/sentry-api.git
+<span class="k">cd</span> sentry-api
+<span class="k">cp</span> .env.example .env
+<span class="k">docker</span> compose up -d        <span class="c"># postgres, redis, mailpit</span>
+<span class="k">./gradlew</span> bootRun           <span class="c"># app on :8080, docs on :8080/swagger</span></pre>
+
+      <h3>② Run the test suite</h3>
+      <pre><span class="k">./gradlew</span> test
+<span class="c"># BUILD SUCCESSFUL · 142 tests · 92% coverage</span></pre>
+
+      <h3>③ Deploy to production</h3>
+      <p>Pick your platform — guides included for each:</p>
+      <ul>
+        <li><b>Render</b> — Dockerfile + render.yaml ready, one-click deploy</li>
+        <li><b>Fly.io</b> — fly.toml + Dockerfile, 4-region rollout walkthrough</li>
+        <li><b>AWS ECS</b> — Terraform module, ALB + RDS + ElastiCache</li>
+        <li><b>Kubernetes</b> — Helm chart with HPA &amp; PodDisruptionBudget</li>
+      </ul>
+
+      <h3>④ Connect a frontend</h3>
+      <p>Drop-in clients shipped for: React (React Query + Zustand), Vue 3 (Pinia), Svelte (Stores), and a Postman environment for QA.</p>
+    </div>
+  </div>
+
+  <!-- CHANGELOG -->
+  <div class="tab-panel" data-p="changelog">
+    <div class="content-card reveal">
+      <h2>Changelog</h2>
+      <p>Every release ships with a migration guide and breaking-change notes — never silently. 100% semver-compliant since v1.0.</p>
+
+      <h3>v3.4.1 — May 16, 2026 · Latest</h3>
+      <ul>
+        <li>WebAuthn ceremony bug fix on iOS Safari 17.5</li>
+        <li>Bumped Spring Boot 3.2.4 → 3.2.5</li>
+        <li>Updated Postgres JDBC driver for CVE-2026-31337</li>
+      </ul>
+
+      <h3>v3.4.0 — April 28, 2026</h3>
+      <ul>
+        <li>NEW: Passkeys / WebAuthn fully supported</li>
+        <li>NEW: Apple Sign In OAuth2 provider</li>
+        <li>NEW: Audit log streaming to Kafka topic</li>
+        <li>Renamed <code>UserRoleService</code> → <code>RoleService</code> (migration in MIGRATION.md)</li>
+      </ul>
+
+      <h3>v3.3.0 — March 6, 2026</h3>
+      <ul>
+        <li>Postgres 16 + Java 21 baseline</li>
+        <li>OpenTelemetry instrumentation</li>
+        <li>Rate-limit headers per IETF draft-ratelimit-headers</li>
+      </ul>
+
+      <h3>v3.2.0 — January 18, 2026</h3>
+      <ul>
+        <li>Multi-tenant scoping helpers</li>
+        <li>Row-level security migrations for Postgres</li>
+        <li>Helm chart published</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="tab-panel" data-p="reviews">
+    <div class="content-card reveal">
+      <h2>412 reviews</h2>
+      <div class="reviews-summary">
+        <div class="rs-big">
+          <div class="num">4.9</div>
+          <div class="stars">★★★★★</div>
+          <div class="from">From 412 verified buyers</div>
+        </div>
+        <div class="rs-bars">
+          <div class="rs-bar"><span>5 stars</span><div class="bar"><span style="width:88%"></span></div><span>362</span></div>
+          <div class="rs-bar"><span>4 stars</span><div class="bar"><span style="width:9%"></span></div><span>38</span></div>
+          <div class="rs-bar"><span>3 stars</span><div class="bar"><span style="width:2%"></span></div><span>9</span></div>
+          <div class="rs-bar"><span>2 stars</span><div class="bar"><span style="width:0.5%"></span></div><span>2</span></div>
+          <div class="rs-bar"><span>1 star</span><div class="bar"><span style="width:0.5%"></span></div><span>1</span></div>
+        </div>
+      </div>
+
+      <div class="review">
+        <div class="av" style="background:#FF7A59">RM</div>
+        <div>
+          <div class="nm">Rina Marchetti</div>
+          <div class="when">2 days ago · Verified buyer</div>
+          <div class="stars">★★★★★</div>
+          <p>Replaced 3 weeks of auth boilerplate. We swapped our broken in-house JWT setup for Sentry's RS256 + refresh-rotation in one sprint. Documentation is the best I've seen on Forge.</p>
+        </div>
+      </div>
+      <div class="review">
+        <div class="av" style="background:#6FA8FF">JK</div>
+        <div>
+          <div class="nm">Jonas Köhler</div>
+          <div class="when">1 week ago · Verified buyer</div>
+          <div class="stars">★★★★★</div>
+          <p>Postman collection alone is worth $59. Audit-log Kafka emitter saved us from rolling our own SIEM bridge. Author responded to a question in 4 hours.</p>
+        </div>
+      </div>
+      <div class="review">
+        <div class="av" style="background:#2BC4A8">SL</div>
+        <div>
+          <div class="nm">Sofia Lindqvist</div>
+          <div class="when">3 weeks ago · Verified buyer</div>
+          <div class="stars">★★★★★</div>
+          <p>The Terraform module for AWS ECS rolled our entire staging env in 18 minutes. Tests pass on first commit. Zero hidden gotchas.</p>
+        </div>
+      </div>
+      <div class="review">
+        <div class="av" style="background:#8B7CF6">DK</div>
+        <div>
+          <div class="nm">Devi Kapoor</div>
+          <div class="when">1 month ago · Verified buyer</div>
+          <div class="stars">★★★★☆</div>
+          <p>Solid. Lost a star because the default Helm chart's resource limits are too tight for a t3.medium — easy to override though. Author already shipped a fix.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTHOR CARD + RELATED -->
+<section class="bk" style="padding:40px 0">
+  <div class="wrap">
+    <div class="author-card reveal">
+      <div class="av">SF</div>
+      <div>
+        <h4>SpringForge</h4>
+        <div class="auth-meta">Backend specialist · Java &amp; Spring Boot · Joined 2023</div>
+        <div class="auth-stats">
+          <div class="a"><span class="nn">14</span><span class="ll">Builds</span></div>
+          <div class="a"><span class="nn">4.9 ★</span><span class="ll">Avg rating</span></div>
+          <div class="a"><span class="nn">12,400+</span><span class="ll">Downloads</span></div>
+          <div class="a"><span class="nn">Top 1%</span><span class="ll">Authors</span></div>
+        </div>
+      </div>
+      <a class="btn" style="background:var(--yellow);color:var(--ink)" href="#">View profile →</a>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:18px;margin-bottom:24px" class="reveal">
+      <div>
+        <span class="section-eyebrow">● More from this author</span>
+        <h2 class="section" style="margin-bottom:0">Related <span class="hi">builds</span>.</h2>
+      </div>
+      <a class="btn outline" href="products.html">All builds →</a>
+    </div>
+
+    <div class="related-grid">
+      ${[
+        ['NimbusPay — Payments API','#FFE9A8','$79'],
+        ['VaultCMS — Multi-tenant CMS','#FF8FA3','$149'],
+        ['EmberQueue — Job Runner','#6FA8FF','$45'],
+        ['Atlas Search — Hybrid Search','#2BC4A8','$89'],
+      ].map(([n,bg,p])=>`
+        <a class="pcard reveal" href="product-details.html">
+          <div class="cover" style="background:${bg}">
+            <svg viewBox="0 0 260 180">
+              <rect x="20" y="20" width="220" height="140" rx="14" fill="#1B1B1B"/>
+              <rect x="32" y="32" width="80" height="10" rx="3" fill="#F7C945"/>
+              <rect x="32" y="48" width="120" height="6" rx="2" fill="#fff" opacity=".5"/>
+              <rect x="32" y="64" width="196" height="84" rx="6" fill="#2a2a2a"/>
+              <rect x="40" y="72" width="50" height="6" rx="2" fill="#FF7A59"/>
+              <rect x="40" y="84" width="80" height="6" rx="2" fill="#fff" opacity=".7"/>
+              <rect x="40" y="100" width="100" height="20" rx="3" fill="#F7C945"/>
+            </svg>
+          </div>
+          <div class="body">
+            <h5>${n}</h5>
+            <div class="row">
+              <span class="pr">${p}</span>
+              <span>By SpringForge</span>
+            </div>
+          </div>
+        </a>
+      `).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bk" style="padding:20px 0 80px">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Ship Sentry API <span class="h">this afternoon</span>.</h2>
+      <p>Buy once, own forever. 6 months of free updates, 14-day refund guarantee, instant download.</p>
+      <div class="btns">
+        <a class="btn dark" href="#">Buy now — $59 →</a>
+        <a class="btn outline" href="#">Live preview</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="logo"><span class="dot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 v6 c0 5 4 9 8 10 c4 -1 8 -5 8 -10 V6 z"/><path d="M9 12 l2 2 l4 -4"/></svg></span> forge</div>
+      <p>Premium, production-ready builds.</p>
+      <a class="btn dark" href="products.html">Browse 7,200+ →</a>
+    </div>
+    <div><h5>Products</h5><ul><li><a href="products.html">Spring Boot</a></li><li><a href="products.html">Microservices</a></li><li><a href="products.html">Web pages</a></li></ul></div>
+    <div><h5>Resources</h5><ul><li><a href="support.html">Support</a></li><li><a href="#">Docs</a></li></ul></div>
+    <div><h5>Company</h5><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 Forge Inc.</span><span>License · Privacy · Terms</span><span><a href="#">Twitter</a> · <a href="#">GitHub</a></span></div>
+</footer>
+
+<script src="../cortex.js"></script>
+<script>
+(() => {
+  const btns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.toggle('on', x === b));
+    const t = b.dataset.t;
+    panels.forEach(p => p.classList.toggle('on', p.dataset.p === t));
+    window.scrollTo({top: document.querySelector('.tab-bar').offsetTop - 80, behavior:'smooth'});
+  }));
+  // thumb switch
+  const thumbs = document.querySelectorAll('.thumbs .t');
+  thumbs.forEach(t => t.addEventListener('click', () => {
+    thumbs.forEach(x => x.classList.toggle('on', x === t));
+  }));
+  // license toggle
+  const lic = document.querySelectorAll('.license button');
+  lic.forEach(l => l.addEventListener('click', () => {
+    lic.forEach(x => x.classList.toggle('on', x === l));
+  }));
+})();
+</script>
+</body>
+</html>

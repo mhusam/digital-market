@@ -1,0 +1,18 @@
+{
+  "name": "digital-market",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.4.1",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "dev:customer": "pnpm --filter ui-customer dev",
+    "dev:admin": "pnpm --filter ui-admin dev",
+    "dev:backend": "pnpm --filter backend dev"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  }
+}

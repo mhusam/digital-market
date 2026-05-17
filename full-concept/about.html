@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>About — Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800;900&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cortex.css">
+<style>
+  .mission{background:#fff;border-radius:28px;padding:60px;text-align:center;box-shadow:10px 10px 0 rgba(0,0,0,.12);max-width:880px;margin:0 auto}
+  .mission .lf{font-family:'Caveat',cursive;font-size:42px;color:var(--coral);transform:rotate(-2deg);display:inline-block;margin-bottom:10px}
+  .mission h2{font-size:clamp(32px,4vw,46px);font-weight:900;letter-spacing:-1.2px;line-height:1.05;margin:0 0 18px}
+  .mission p{font-size:18px;color:var(--ink-soft);max-width:620px;margin:0 auto}
+
+  .values{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .value{background:#fff;border-radius:22px;padding:28px;transition:.25s}
+  .value:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.08)}
+  .value .ix{font-family:'Caveat',cursive;font-size:36px;color:var(--coral);line-height:1;margin-bottom:10px}
+  .value h4{margin:0 0 8px;font-size:20px;font-weight:900;letter-spacing:-.4px}
+  .value p{margin:0;font-size:14px;color:var(--ink-soft)}
+
+  .journey{position:relative;padding-left:60px;margin-left:24px}
+  .journey::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ink);border-radius:2px}
+  .jrow{position:relative;margin-bottom:30px;display:grid;grid-template-columns:120px 1fr;gap:24px}
+  .jrow::before{content:'';position:absolute;left:-69px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--yellow);border:4px solid var(--ink)}
+  .jrow .yr{font-family:'Caveat',cursive;font-size:36px;font-weight:700;line-height:1}
+  .jrow .body{background:#fff;border-radius:18px;padding:22px}
+  .jrow .body h4{margin:0 0 6px;font-size:18px;font-weight:900;letter-spacing:-.3px}
+  .jrow .body p{margin:0;font-size:14px;color:var(--ink-soft)}
+
+  .team{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .person{background:#fff;border-radius:22px;padding:22px;text-align:center;transition:.25s}
+  .person:hover{transform:translateY(-3px)}
+  .person .av{width:96px;height:96px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font-weight:900;font-size:34px}
+  .person h4{margin:0 0 4px;font-size:17px;font-weight:900;letter-spacing:-.3px}
+  .person .role{font-size:13px;color:var(--ink-soft);font-weight:700}
+  .person .from{font-size:11px;color:var(--ink-soft);margin-top:8px;letter-spacing:.4px;text-transform:uppercase;font-weight:800}
+
+  .authors{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .author{background:#fff;border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:14px;transition:.25s}
+  .author:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.08)}
+  .author .hd{display:flex;gap:14px;align-items:center}
+  .author .hav{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;font-weight:900;font-size:22px;color:var(--ink)}
+  .author .nm{font-weight:900;font-size:17px}
+  .author .role{font-size:13px;color:var(--ink-soft);font-weight:700}
+  .author p{margin:0;font-size:14px;color:var(--ink-soft);line-height:1.55}
+  .author .row{display:flex;gap:14px;padding-top:12px;border-top:1px dashed rgba(0,0,0,.15);margin-top:auto;font-size:12px;font-weight:700}
+  .author .row span{display:inline-flex;flex-direction:column;gap:2px}
+  .author .row span .v{font-size:18px;font-weight:900;color:var(--ink);letter-spacing:-.4px;line-height:1}
+
+  @media (max-width:900px){
+    .values, .authors{grid-template-columns:1fr}
+    .team{grid-template-columns:repeat(2,1fr)}
+    .journey{padding-left:50px;margin-left:14px}
+    .jrow{grid-template-columns:1fr;gap:6px}
+    .jrow::before{left:-58px}
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-prog" id="scrollProg"></div>
+<div class="bg-shapes" aria-hidden="true">
+  <div class="grid-dots" id="gridDots"></div>
+  <div class="blob b1" data-speed="0.18"></div>
+  <div class="blob b2" data-speed="-0.12"></div>
+  <div class="blob b3" data-speed="0.22"></div>
+  <div class="blob b4" data-speed="-0.16"></div>
+</div>
+
+<nav class="top">
+  <a class="logo" href="index.html"><span class="dot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 v6 c0 5 4 9 8 10 c4 -1 8 -5 8 -10 V6 z"/><path d="M9 12 l2 2 l4 -4"/></svg></span> forge</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="support.html">Support</a>
+    <a href="about.html" class="active">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-cta"><a href="#">Sign in</a><a class="btn dark" href="#">Become an author →</a></div>
+</nav>
+
+<header class="page-hero" style="padding:60px 28px 20px;text-align:center">
+  <div class="reveal" style="max-width:820px;margin:0 auto">
+    <span class="eyebrow"><span class="pulse"></span> Founded 2022 · 32 staff · 380 authors</span>
+    <h1 class="hero-title">We're building the marketplace <span class="scribble">we wished</span> existed.</h1>
+    <p class="lede" style="margin-left:auto;margin-right:auto">Forge is a marketplace for production-grade backend codebases, microservices and web builds — curated, tested and maintained by a small group of authors who actually ship for a living.</p>
+  </div>
+</header>
+
+<!-- MISSION -->
+<section class="bk" style="padding:30px 0 60px">
+  <div class="wrap">
+    <div class="mission reveal">
+      <div class="lf">Our mission</div>
+      <h2>Let engineering teams <span style="background:var(--yellow);padding:0 10px;border-radius:10px">skip the boilerplate</span>.</h2>
+      <p>We started Forge because we were tired of rebuilding the same auth service, the same payment integration, the same admin dashboard at every job. So we built a marketplace where every codebase is held to one standard: would we ship this to our own paying customers? Yes — every time. Or it doesn't list.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="bk" style="padding:20px 0 60px">
+  <div class="wrap">
+    <div class="stats reveal">
+      <div class="stat"><div class="num" data-count="7200"><span class="counter">0</span><span class="unit">+</span></div><div class="label">Production-grade builds listed</div></div>
+      <div class="stat"><div class="num" data-count="380"><span class="counter">0</span></div><div class="label">Active independent authors</div></div>
+      <div class="stat"><div class="num" data-count="18"><span class="counter">0</span><span class="unit">k</span></div><div class="label">Developers shipping with Forge</div></div>
+      <div class="stat"><div class="num" data-count="4.9" data-decimals="1"><span class="counter">0</span><span class="unit"> / 5</span></div><div class="label">Avg rating across 60k reviews</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="bk" style="padding:30px 0 60px">
+  <div class="wrap">
+    <span class="section-eyebrow reveal">● Values</span>
+    <h2 class="section reveal">How we <span class="hi">curate</span>.</h2>
+    <p class="section-sub reveal">Six standards every Forge build is reviewed against before it ships.</p>
+
+    <div class="values">
+      <div class="value reveal d1"><div class="ix">①</div><h4>Tests are non-negotiable</h4><p>If a build lists a feature, that feature has a test. We don't ship feature-rich PowerPoints.</p></div>
+      <div class="value reveal d2"><div class="ix">②</div><h4>Full source, no DRM</h4><p>Every build is plain readable code via Git. No license keys, no phone-home, no obfuscation. Ever.</p></div>
+      <div class="value reveal d3"><div class="ix">③</div><h4>Active maintenance</h4><p>Authors commit to 6 months of updates &amp; bug fixes minimum. Most actively maintain for years.</p></div>
+      <div class="value reveal d4"><div class="ix">④</div><h4>Real docs</h4><p>README, ADR log, architecture diagram, OpenAPI spec. If we can't follow it ourselves, it doesn't list.</p></div>
+      <div class="value reveal d5"><div class="ix">⑤</div><h4>Fair pricing</h4><p>Authors set the price. We don't push discounts that erode their margins. Cheap is rarely good engineering.</p></div>
+      <div class="value reveal d6"><div class="ix">⑥</div><h4>Authors first</h4><p>80% revenue share to authors on every sale. The largest split of any marketplace in the category.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section class="bk" style="padding:30px 0 60px">
+  <div class="wrap">
+    <span class="section-eyebrow reveal">● Journey</span>
+    <h2 class="section reveal">From a <span class="hi">side-project</span> to 18k builders.</h2>
+
+    <div class="journey">
+      <div class="jrow reveal d1"><div class="yr">2022</div><div class="body"><h4>The first build</h4><p>Maya and Leo open-source their Spring Boot auth module. 1,200 GitHub stars in two weeks. Forge begins as a side-project to put a price tag on quality.</p></div></div>
+      <div class="jrow reveal d2"><div class="yr">2023</div><div class="body"><h4>Seed round &amp; 40 authors</h4><p>$3M led by Founders &amp; Friends. First 40 authors invited from open-source. 1,800 builds listed by year end.</p></div></div>
+      <div class="jrow reveal d3"><div class="yr">2024</div><div class="body"><h4>Series A &amp; 10k devs</h4><p>$14M Series A. 10,000 paying developers. Lisbon office opens. Authors receive their first six-figure payouts.</p></div></div>
+      <div class="jrow reveal d4"><div class="yr">2025</div><div class="body"><h4>Microservices &amp; Solutions</h4><p>We expand beyond standalone builds. Multi-service bundles &amp; full SaaS starter solutions become Forge's most popular category.</p></div></div>
+      <div class="jrow reveal d5"><div class="yr">2026</div><div class="body"><h4>7,200 builds, 380 authors</h4><p>Forge today: a curated marketplace serving 18k developers, with build authors earning over $14M cumulatively last year.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="bk" style="padding:30px 0 60px">
+  <div class="wrap">
+    <span class="section-eyebrow reveal">● Team</span>
+    <h2 class="section reveal">The <span class="hi">tiny team</span> behind Forge.</h2>
+    <p class="section-sub reveal">32 people across 4 timezones — engineering, design, and the 6-person curation team that reviews every new build.</p>
+
+    <div class="team">
+      <div class="person reveal d1"><div class="av" style="background:#FF7A59">MO</div><h4>Maya Okafor</h4><div class="role">Co-founder &amp; CEO</div><div class="from">Prev. Stripe, Asana</div></div>
+      <div class="person reveal d2"><div class="av" style="background:#6FA8FF">LB</div><h4>Leo Bernardo</h4><div class="role">Co-founder &amp; CTO</div><div class="from">Prev. GitHub, Pivotal</div></div>
+      <div class="person reveal d3"><div class="av" style="background:#2BC4A8">DK</div><h4>Devi Kapoor</h4><div class="role">Head of Curation</div><div class="from">Prev. JetBrains, Heroku</div></div>
+      <div class="person reveal d4"><div class="av" style="background:#8B7CF6">RM</div><h4>Rafael Mendes</h4><div class="role">Head of Design</div><div class="from">Prev. Linear, Figma</div></div>
+      <div class="person reveal d1"><div class="av" style="background:#FF8FA3">SL</div><h4>Sofia Lindqvist</h4><div class="role">Head of Author Success</div><div class="from">Prev. Gumroad</div></div>
+      <div class="person reveal d2"><div class="av" style="background:#FFE9A8">EO</div><h4>Eliana Okonkwo</h4><div class="role">Head of Engineering</div><div class="from">Prev. Spring Source, Okta</div></div>
+      <div class="person reveal d3"><div class="av" style="background:#FF7A59">HT</div><h4>Hideo Tanaka</h4><div class="role">Head of Marketplace</div><div class="from">Prev. Themeforest, Rakuten</div></div>
+      <div class="person reveal d4"><div class="av" style="background:#6FA8FF">CG</div><h4>Camille Girard</h4><div class="role">Head of People</div><div class="from">Prev. Loom, Notion</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOP AUTHORS -->
+<section class="bk" style="padding:30px 0 60px">
+  <div class="wrap">
+    <span class="section-eyebrow reveal">● Featured authors</span>
+    <h2 class="section reveal">Built by <span class="hi">people who ship</span>.</h2>
+    <p class="section-sub reveal">A few of the 380 author teams selling on Forge — each one a working engineering team or solo founder.</p>
+
+    <div class="authors">
+      <div class="author reveal d1">
+        <div class="hd"><div class="hav" style="background:#FFE9A8">SF</div><div><div class="nm">SpringForge</div><div class="role">Spring Boot specialists · Lisbon</div></div></div>
+        <p>"We've shipped 14 production Spring Boot apps for B2B SaaS clients. Sentry API is what we wish we'd had on day one."</p>
+        <div class="row"><span><span class="v">42</span>builds</span><span><span class="v">4.9★</span>avg rating</span><span><span class="v">$1.2M</span>earnings</span></div>
+      </div>
+      <div class="author reveal d2">
+        <div class="hd"><div class="hav" style="background:#FF8FA3">ML</div><div><div class="nm">MicroLabs</div><div class="role">Distributed systems team · Berlin</div></div></div>
+        <p>"Ex-Kafka, ex-Confluent. We turn the patterns we used at hyperscale into starter kits you can buy for $99."</p>
+        <div class="row"><span><span class="v">18</span>builds</span><span><span class="v">4.8★</span>avg rating</span><span><span class="v">$680k</span>earnings</span></div>
+      </div>
+      <div class="author reveal d3">
+        <div class="hd"><div class="hav" style="background:#6FA8FF">PT</div><div><div class="nm">PixelTribe</div><div class="role">Design-led frontend team · Tokyo</div></div></div>
+        <p>"Every theme we ship has 80+ pages, full RTL, dark mode &amp; WCAG-AA. We treat marketplace builds like client work."</p>
+        <div class="row"><span><span class="v">96</span>builds</span><span><span class="v">4.9★</span>avg rating</span><span><span class="v">$2.1M</span>earnings</span></div>
+      </div>
+      <div class="author reveal d4">
+        <div class="hd"><div class="hav" style="background:#2BC4A8">SK</div><div><div class="nm">StackKitchen</div><div class="role">Full-stack solutions · Amsterdam</div></div></div>
+        <p>"We build SaaS starter bundles — auth + billing + admin + landing — for founders who want to ship in a weekend."</p>
+        <div class="row"><span><span class="v">12</span>builds</span><span><span class="v">5.0★</span>avg rating</span><span><span class="v">$540k</span>earnings</span></div>
+      </div>
+      <div class="author reveal d5">
+        <div class="hd"><div class="hav" style="background:#8B7CF6">QL</div><div><div class="nm">QuarkLabs</div><div class="role">Quarkus &amp; native team · Brno</div></div></div>
+        <p>"Native-image-first builds for teams who care about cold-start. Our APIs boot in &lt;100ms in a Kubernetes pod."</p>
+        <div class="row"><span><span class="v">22</span>builds</span><span><span class="v">4.7★</span>avg rating</span><span><span class="v">$380k</span>earnings</span></div>
+      </div>
+      <div class="author reveal d6">
+        <div class="hd"><div class="hav" style="background:#FF7A59">CW</div><div><div class="nm">CodeWorkshop</div><div class="role">Indie author · Mumbai</div></div></div>
+        <p>"Solo author, ex-banking-engineer. I sell the patterns I wish my old team had bought instead of writing them."</p>
+        <div class="row"><span><span class="v">8</span>builds</span><span><span class="v">4.9★</span>avg rating</span><span><span class="v">$180k</span>earnings</span></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:36px" class="reveal">
+      <a class="btn outline" href="#">Become a Forge author →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bk" style="padding:30px 0 80px">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Or just <span class="h">try a build</span>.</h2>
+      <p>Browse 7,200+ premium codebases. 14-day refund, lifetime updates, real source — no credit card to look around.</p>
+      <div class="btns">
+        <a class="btn dark" href="products.html">Browse marketplace →</a>
+        <a class="btn outline" href="contact.html">Contact us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div><div class="logo"><span class="dot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 v6 c0 5 4 9 8 10 c4 -1 8 -5 8 -10 V6 z"/><path d="M9 12 l2 2 l4 -4"/></svg></span> forge</div><p>Production-ready builds for engineering teams.</p><a class="btn dark" href="products.html">Browse 7,200+ builds →</a></div>
+    <div><h5>Products</h5><ul><li><a href="products.html">Spring Boot</a></li><li><a href="products.html">Microservices</a></li><li><a href="products.html">Web pages</a></li></ul></div>
+    <div><h5>Resources</h5><ul><li><a href="support.html">Support</a></li><li><a href="#">Documentation</a></li></ul></div>
+    <div><h5>Company</h5><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 Forge Inc.</span><span>License · Privacy · Terms</span></div>
+</footer>
+
+<script src="../cortex.js"></script>
+</body>
+</html>

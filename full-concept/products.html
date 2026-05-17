@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Browse 7,200+ builds — Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800;900&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../cortex.css">
+<style>
+  /* Page header */
+  .page-banner{
+    background:var(--ink);color:#fff;border-radius:28px;padding:50px 40px;margin:30px 28px 0;max-width:1180px;
+    margin-left:auto;margin-right:auto;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:40px;
+    position:relative;z-index:2;overflow:hidden;box-shadow:10px 10px 0 rgba(0,0,0,.18);
+  }
+  .page-banner::before{content:'';position:absolute;width:240px;height:240px;background:var(--coral);border-radius:50%;right:-90px;top:-90px;opacity:.2}
+  .page-banner h1{font-size:clamp(36px,4.5vw,52px);font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin:0 0 12px;position:relative}
+  .page-banner h1 .h{background:var(--yellow);color:var(--ink);padding:0 10px;border-radius:10px}
+  .page-banner p{margin:0 0 20px;opacity:.75;max-width:480px;position:relative}
+  .page-banner .crumb{font-size:13px;font-weight:700;opacity:.7;margin-bottom:14px;position:relative}
+  .page-banner .crumb b{opacity:1;color:var(--yellow)}
+  .page-banner .search{display:flex;gap:8px;background:#2a2a2a;border-radius:999px;padding:6px;max-width:420px;position:relative}
+  .page-banner .search input{flex:1;background:transparent;border:none;outline:none;color:#fff;padding:12px 18px;font-size:14px;font-weight:600;font-family:inherit}
+  .page-banner .search input::placeholder{color:rgba(255,255,255,.4)}
+  .page-banner .search .btn{padding:11px 18px;background:var(--yellow);color:var(--ink)}
+  .page-banner .art{position:relative}
+  .page-banner .art svg{width:100%}
+
+  /* Layout */
+  .product-layout{
+    display:grid;grid-template-columns:280px 1fr;gap:28px;max-width:1180px;margin:0 auto;padding:28px;position:relative;z-index:2;
+  }
+
+  /* Sidebar */
+  .sidebar{position:sticky;top:24px;align-self:flex-start;display:flex;flex-direction:column;gap:18px}
+  .filter-card{background:#fff;border-radius:18px;padding:24px}
+  .filter-card h4{
+    margin:0 0 16px;font-size:14px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .filter-card h4 .clr{font-size:11px;font-weight:700;color:var(--ink-soft);cursor:pointer;text-transform:none;letter-spacing:0}
+  .filter-list{display:flex;flex-direction:column;gap:10px}
+  .filter-list label{
+    display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);
+  }
+  .filter-list label .cnt{margin-left:auto;font-size:11px;color:var(--ink-soft);font-weight:700;background:var(--soft);padding:2px 8px;border-radius:999px}
+  .filter-list input[type=checkbox]{accent-color:var(--ink);width:16px;height:16px;cursor:pointer}
+  .filter-list label:hover{color:var(--coral)}
+
+  .price-range input[type=range]{
+    width:100%;-webkit-appearance:none;appearance:none;height:6px;background:var(--soft);border-radius:999px;outline:none;margin-top:8px;
+  }
+  .price-range input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;background:var(--ink);border-radius:50%;cursor:pointer}
+  .price-range .vals{display:flex;justify-content:space-between;font-size:12px;font-weight:800;margin-top:6px;color:var(--ink-soft)}
+
+  .freebie-card{
+    background:var(--ink);color:#fff;border-radius:18px;padding:24px;position:relative;overflow:hidden;
+  }
+  .freebie-card::before{content:'';position:absolute;width:120px;height:120px;background:var(--yellow);border-radius:50%;right:-40px;top:-40px;opacity:.18}
+  .freebie-card .lbl{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--yellow);font-weight:900;margin-bottom:6px;position:relative}
+  .freebie-card h4{margin:0 0 8px;font-size:22px;font-weight:900;letter-spacing:-.5px;line-height:1.1;position:relative}
+  .freebie-card p{margin:0 0 14px;font-size:13px;opacity:.7;position:relative}
+  .freebie-card .btn{background:var(--yellow);color:var(--ink);position:relative}
+
+  /* Toolbar */
+  .toolbar{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+    background:#fff;border-radius:18px;padding:14px 22px;margin-bottom:22px;
+  }
+  .toolbar .left{font-size:14px;font-weight:700;color:var(--ink-soft)}
+  .toolbar .left b{color:var(--ink)}
+  .toolbar select{font-family:inherit;font-weight:700;font-size:13px;padding:10px 16px;border-radius:999px;background:var(--soft);border:none;outline:none;cursor:pointer}
+  .toolbar .view{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:999px}
+  .toolbar .view button{background:transparent;border:none;padding:8px 12px;border-radius:999px;font-weight:800;font-size:12px;cursor:pointer;font-family:inherit}
+  .toolbar .view button.on{background:var(--ink);color:#fff}
+
+  /* Product grid */
+  .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .pcard{background:#fff;border-radius:20px;overflow:hidden;cursor:pointer;transition:.25s;display:flex;flex-direction:column;position:relative}
+  .pcard:hover{transform:translateY(-4px);box-shadow:0 14px 28px rgba(0,0,0,.08)}
+  .pcard .cover{aspect-ratio:1.5/1;display:grid;place-items:center;position:relative;overflow:hidden}
+  .pcard .cover svg{width:90%;height:90%}
+  .pcard .actions{position:absolute;inset:0;background:rgba(27,27,27,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;opacity:0;transition:.2s}
+  .pcard:hover .actions{opacity:1}
+  .pcard .actions .btn{padding:11px 20px;font-size:13px}
+  .pcard .meta{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .pcard .author{font-size:12px;color:var(--ink-soft);font-weight:700}
+  .pcard .author b{color:var(--ink)}
+  .pcard h4{margin:0;font-size:16px;font-weight:900;letter-spacing:-.3px}
+  .pcard .ftr{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px dashed rgba(0,0,0,.12);margin-top:auto}
+  .pcard .price{font-size:18px;font-weight:900;color:var(--ink);letter-spacing:-.5px}
+  .pcard .tag-c{background:var(--cream);font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.4px}
+
+  /* Pagination */
+  .pagination{display:flex;gap:6px;justify-content:center;align-items:center;margin-top:40px}
+  .pagination button{
+    width:42px;height:42px;border-radius:12px;background:#fff;border:none;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:.2s;
+  }
+  .pagination button.on{background:var(--ink);color:var(--yellow)}
+  .pagination button:hover:not(.on){background:var(--cream)}
+  .pagination .arr{font-size:18px}
+
+  @media (max-width:900px){
+    .page-banner{grid-template-columns:1fr;margin:20px}
+    .product-layout{grid-template-columns:1fr;padding:18px}
+    .sidebar{position:static}
+    .product-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-prog" id="scrollProg"></div>
+<div class="bg-shapes" aria-hidden="true">
+  <div class="grid-dots" id="gridDots"></div>
+  <div class="blob b1" data-speed="0.18"></div>
+  <div class="blob b2" data-speed="-0.12"></div>
+  <div class="blob b3" data-speed="0.22"></div>
+  <div class="blob b4" data-speed="-0.16"></div>
+</div>
+
+<!-- NAV -->
+<nav class="top">
+  <a class="logo" href="index.html">
+    <span class="dot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 v6 c0 5 4 9 8 10 c4 -1 8 -5 8 -10 V6 z"/><path d="M9 12 l2 2 l4 -4"/></svg></span>
+    forge
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="products.html" class="active">Products</a>
+    <a href="support.html">Support</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-cta">
+    <a href="#">Sign in</a>
+    <a class="btn dark" href="contact.html">Sell on Forge →</a>
+  </div>
+</nav>
+
+<!-- BANNER -->
+<section class="page-banner reveal">
+  <div>
+    <div class="crumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <b>Products</b></div>
+    <h1>Browse <span class="h">7,200+</span> production-ready builds.</h1>
+    <p>Spring Boot APIs, microservice meshes, web pages, full-stack solutions. Filter by stack, framework, price — find your next codebase in 30 seconds.</p>
+    <form class="search" onsubmit="event.preventDefault()">
+      <input type="text" placeholder="Search by keyword, stack, author…">
+      <button class="btn" type="submit">Search →</button>
+    </form>
+  </div>
+  <div class="art">
+    <svg viewBox="0 0 360 260">
+      <rect x="20" y="40" width="160" height="100" rx="14" fill="#FF7A59"/>
+      <rect x="36" y="56" width="60" height="6" rx="2" fill="#1B1B1B"/>
+      <rect x="36" y="68" width="80" height="14" rx="3" fill="#1B1B1B"/>
+      <rect x="36" y="92" width="120" height="34" rx="6" fill="#1B1B1B"/>
+      <rect x="200" y="20" width="140" height="80" rx="14" fill="#F7C945"/>
+      <rect x="214" y="34" width="60" height="6" rx="2" fill="#1B1B1B"/>
+      <rect x="214" y="46" width="100" height="14" rx="3" fill="#1B1B1B"/>
+      <circle cx="320" cy="80" r="10" fill="#1B1B1B"/>
+      <rect x="200" y="120" width="140" height="120" rx="14" fill="#6FA8FF"/>
+      <circle cx="270" cy="170" r="28" fill="#FFFDF6"/>
+      <rect x="220" y="208" width="100" height="20" rx="6" fill="#1B1B1B"/>
+      <rect x="20" y="160" width="160" height="80" rx="14" fill="#2BC4A8"/>
+      <rect x="36" y="174" width="60" height="6" rx="2" fill="#1B1B1B"/>
+      <rect x="36" y="186" width="100" height="6" rx="2" fill="#1B1B1B" opacity=".5"/>
+      <rect x="36" y="200" width="60" height="22" rx="5" fill="#1B1B1B"/>
+    </svg>
+  </div>
+</section>
+
+<!-- LAYOUT: SIDEBAR + GRID -->
+<div class="product-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar reveal">
+    <div class="filter-card">
+      <h4>Category <span class="clr">Clear</span></h4>
+      <div class="filter-list">
+        <label><input type="checkbox" checked> Spring Boot <span class="cnt">1,420</span></label>
+        <label><input type="checkbox"> Microservices <span class="cnt">820</span></label>
+        <label><input type="checkbox" checked> Web pages <span class="cnt">3,180</span></label>
+        <label><input type="checkbox"> Solutions <span class="cnt">680</span></label>
+        <label><input type="checkbox"> Admin templates <span class="cnt">540</span></label>
+        <label><input type="checkbox"> Mobile apps <span class="cnt">360</span></label>
+        <label><input type="checkbox"> DevOps <span class="cnt">200</span></label>
+      </div>
+    </div>
+
+    <div class="filter-card">
+      <h4>Stack <span class="clr">Clear</span></h4>
+      <div class="filter-list">
+        <label><input type="checkbox" checked> Java / Spring <span class="cnt">1,420</span></label>
+        <label><input type="checkbox"> Node.js <span class="cnt">820</span></label>
+        <label><input type="checkbox"> Python <span class="cnt">540</span></label>
+        <label><input type="checkbox"> .NET <span class="cnt">280</span></label>
+        <label><input type="checkbox"> Go <span class="cnt">220</span></label>
+        <label><input type="checkbox"> React <span class="cnt">1,180</span></label>
+        <label><input type="checkbox"> Vue <span class="cnt">680</span></label>
+        <label><input type="checkbox"> Astro <span class="cnt">120</span></label>
+      </div>
+    </div>
+
+    <div class="filter-card price-range">
+      <h4>Price range <span class="clr">Clear</span></h4>
+      <input type="range" min="0" max="300" value="120">
+      <div class="vals"><span>$0</span><span>up to $120</span></div>
+    </div>
+
+    <div class="filter-card">
+      <h4>Tags <span class="clr">Clear</span></h4>
+      <div class="filter-list">
+        <label><input type="checkbox"> API <span class="cnt">680</span></label>
+        <label><input type="checkbox"> Auth <span class="cnt">320</span></label>
+        <label><input type="checkbox"> Kafka <span class="cnt">160</span></label>
+        <label><input type="checkbox"> SaaS starter <span class="cnt">240</span></label>
+        <label><input type="checkbox"> Multi-tenant <span class="cnt">120</span></label>
+        <label><input type="checkbox"> Admin <span class="cnt">540</span></label>
+        <label><input type="checkbox"> Landing page <span class="cnt">1,180</span></label>
+        <label><input type="checkbox"> E-commerce <span class="cnt">320</span></label>
+      </div>
+    </div>
+
+    <div class="freebie-card">
+      <div class="lbl">Free this week</div>
+      <h4>Check out our free templates</h4>
+      <p>20 hand-picked open templates — fully MIT, no signup required.</p>
+      <a class="btn" href="#">Free templates →</a>
+    </div>
+  </aside>
+
+  <!-- GRID -->
+  <main>
+    <div class="toolbar reveal">
+      <div class="left">Showing <b>1–24</b> of <b>7,247</b> builds</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <select>
+          <option>Sort: Trending</option>
+          <option>Newest first</option>
+          <option>Best rated</option>
+          <option>Price: low → high</option>
+          <option>Price: high → low</option>
+        </select>
+        <div class="view">
+          <button class="on">Grid</button>
+          <button>List</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-grid">
+      <!-- 12 products -->
+      ${[
+        ['Sentry API — Auth & RBAC Starter','SpringForge','Spring Boot','$59','#FFE9A8',1],
+        ['Helix Mesh — Event-driven Starter','MicroLabs','Microservices','$129','#FF8FA3',2],
+        ['Lumen — SaaS Landing Kit','PixelTribe','Web','$39','#6FA8FF',3],
+        ['Pulse Admin — React Dashboard','PixelTribe','Web','$49','#2BC4A8',1],
+        ['VaultCMS — Multi-tenant CMS','SpringForge','Spring Boot','$149','#8B7CF6',2],
+        ['BeaconKit — SaaS Starter Bundle','StackKitchen','Solutions','$249','#FF7A59',3],
+        ['Atlas Admin — Bootstrap 5','PixelTribe','Web','$29','#FFE9A8',1],
+        ['Orbit Mesh — 6-Service Starter','MicroLabs','Microservices','$99','#FF8FA3',2],
+        ['NimbusPay — Payment Gateway API','SpringForge','Spring Boot','$79','#6FA8FF',3],
+        ['Aurora — Vue 3 Admin Template','PixelTribe','Web','$45','#2BC4A8',1],
+        ['FleetOps — Docker Swarm Bundle','MicroLabs','Microservices','$89','#8B7CF6',2],
+        ['InsightOS — Analytics Solution','StackKitchen','Solutions','$199','#FF7A59',3],
+      ].map(([name,author,tag,price,bg,art],i)=>`
+        <a class="pcard reveal d${(i%6)+1}" href="product-details.html">
+          <div class="cover" style="background:${bg}">
+            ${art===1?`
+              <svg viewBox="0 0 260 180">
+                <rect x="20" y="20" width="220" height="140" rx="14" fill="#1B1B1B"/>
+                <rect x="32" y="32" width="80" height="10" rx="3" fill="#F7C945"/>
+                <rect x="32" y="48" width="120" height="6" rx="2" fill="#fff" opacity=".5"/>
+                <rect x="32" y="64" width="196" height="32" rx="6" fill="#2a2a2a"/>
+                <rect x="40" y="72" width="40" height="6" rx="2" fill="#FF7A59"/>
+                <rect x="40" y="82" width="100" height="5" rx="2" fill="#fff" opacity=".5"/>
+                <rect x="146" y="80" width="74" height="10" rx="3" fill="#F7C945"/>
+                <rect x="32" y="104" width="60" height="44" rx="6" fill="#FF7A59"/>
+                <rect x="100" y="104" width="60" height="44" rx="6" fill="#6FA8FF"/>
+                <rect x="168" y="104" width="60" height="44" rx="6" fill="#2BC4A8"/>
+              </svg>
+            `:art===2?`
+              <svg viewBox="0 0 260 180">
+                <rect x="20" y="20" width="220" height="140" rx="14" fill="#1B1B1B"/>
+                <circle cx="80" cy="60" r="14" fill="#F7C945"/>
+                <circle cx="180" cy="60" r="14" fill="#FF7A59"/>
+                <circle cx="130" cy="120" r="14" fill="#2BC4A8"/>
+                <circle cx="50" cy="120" r="10" fill="#6FA8FF"/>
+                <circle cx="210" cy="120" r="10" fill="#8B7CF6"/>
+                <line x1="80" y1="60" x2="180" y2="60" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/>
+                <line x1="80" y1="60" x2="130" y2="120" stroke="#fff" stroke-width="2"/>
+                <line x1="180" y1="60" x2="130" y2="120" stroke="#fff" stroke-width="2"/>
+              </svg>
+            `:`
+              <svg viewBox="0 0 260 180">
+                <rect x="20" y="20" width="220" height="140" rx="14" fill="#FFFDF6"/>
+                <rect x="20" y="20" width="220" height="22" rx="14" fill="#1B1B1B"/>
+                <circle cx="38" cy="31" r="3" fill="#FF7A59"/>
+                <circle cx="50" cy="31" r="3" fill="#F7C945"/>
+                <circle cx="62" cy="31" r="3" fill="#2BC4A8"/>
+                <rect x="32" y="52" width="100" height="8" rx="3" fill="#1B1B1B"/>
+                <rect x="32" y="66" width="140" height="5" rx="2" fill="#1B1B1B" opacity=".5"/>
+                <rect x="32" y="82" width="50" height="14" rx="4" fill="#1B1B1B"/>
+                <rect x="32" y="108" width="60" height="44" rx="6" fill="#FFE9A8"/>
+                <rect x="100" y="108" width="60" height="44" rx="6" fill="#FF8FA3"/>
+                <rect x="168" y="108" width="60" height="44" rx="6" fill="#6FA8FF"/>
+              </svg>
+            `}
+            <div class="actions">
+              <span class="btn dark" style="background:#F7C945;color:#1B1B1B">View Details →</span>
+              <span class="btn outline" style="border-color:#fff;color:#fff">Live Preview</span>
+            </div>
+          </div>
+          <div class="meta">
+            <div class="author">By <b>${author}</b> in <b>${tag}</b></div>
+            <h4>${name}</h4>
+            <div class="ftr">
+              <span class="price">${price}</span>
+              <span class="tag-c">${tag}</span>
+            </div>
+          </div>
+        </a>
+      `).join('')}
+    </div>
+
+    <div class="pagination reveal">
+      <button class="arr">←</button>
+      <button class="on">1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>…</button>
+      <button>30</button>
+      <button class="arr">→</button>
+    </div>
+  </main>
+</div>
+
+<!-- TRENDING STRIP -->
+<section class="bk" style="padding:60px 0">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:18px;margin-bottom:30px" class="reveal">
+      <div>
+        <span class="section-eyebrow">● Trending categories</span>
+        <h2 class="section" style="margin-bottom:0">Popular <span class="hi">stacks</span>.</h2>
+      </div>
+      <a class="btn outline" href="#">Explore all →</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px" class="reveal d1">
+      ${[
+        ['Java','#FF7A59'],['Spring Boot','#F7C945'],['React','#6FA8FF'],['Vue','#2BC4A8'],['Node.js','#8B7CF6'],['Docker','#FF8FA3'],
+        ['k8s','#FFE9A8'],['Kafka','#FF7A59'],['PostgreSQL','#6FA8FF'],['Redis','#FF8FA3'],['GraphQL','#2BC4A8'],['Tailwind','#8B7CF6']
+      ].map(([n,c])=>`
+        <div style="background:#fff;border-radius:18px;padding:18px;text-align:center;transition:.2s;cursor:pointer">
+          <div style="width:40px;height:40px;border-radius:12px;background:${c};margin:0 auto 8px;display:grid;place-items:center;font-weight:900;font-size:14px">${n.charAt(0)}</div>
+          <div style="font-weight:900;font-size:13px">${n}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bk" style="padding:20px 0 80px">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Become a <span class="h">Forge author</span>.</h2>
+      <p>Sell your Spring Boot starters, micro-service patterns or web templates to 18k+ developers. Keep 70% of every sale, paid monthly.</p>
+      <div class="btns">
+        <a class="btn dark" href="contact.html">Apply to sell →</a>
+        <a class="btn outline" href="about.html">Learn more</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="logo"><span class="dot"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 v6 c0 5 4 9 8 10 c4 -1 8 -5 8 -10 V6 z"/><path d="M9 12 l2 2 l4 -4"/></svg></span> forge</div>
+      <p>Premium, production-ready builds for engineering teams.</p>
+      <a class="btn dark" href="products.html">Browse 7,200+ →</a>
+    </div>
+    <div><h5>Products</h5><ul><li><a href="products.html">Spring Boot apps</a></li><li><a href="products.html">Microservices</a></li><li><a href="products.html">Web pages</a></li><li><a href="products.html">Solutions</a></li></ul></div>
+    <div><h5>Resources</h5><ul><li><a href="support.html">Support</a></li><li><a href="#">Documentation</a></li><li><a href="#">Changelog</a></li></ul></div>
+    <div><h5>Company</h5><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="#">Become an author</a></li></ul></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 Forge Inc.</span><span>License · Privacy · Terms</span><span><a href="#">Twitter</a> · <a href="#">GitHub</a></span></div>
+</footer>
+
+<script src="../cortex.js"></script>
+</body>
+</html>
