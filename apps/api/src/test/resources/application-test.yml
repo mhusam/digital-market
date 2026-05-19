@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+
+app:
+  jwt:
+    secret: test-secret-that-is-long-enough-for-hmac-sha256-signing
+    expiration-ms: 3600000
+  paypal:
+    client-id: test
+    client-secret: test
+    webhook-id: test
+    mode: sandbox
+    base-url: https://api-m.sandbox.paypal.com
+    return-url: http://localhost:3001/checkout/success
+    cancel-url: http://localhost:3001/checkout/cancelled
+  s3:
+    endpoint: https://s3.amazonaws.com
+    region: us-east-1
+    bucket: test-bucket
+    access-key: test
+    secret-key: test
+    signed-url-ttl-minutes: 60
+  cors:
+    allowed-origins: http://localhost:3000
+  mail-from: test@test.com
+  store-name: Test Store

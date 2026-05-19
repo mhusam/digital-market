@@ -1,0 +1,20 @@
+# Local overrides (not loaded until you copy and activate the `local` profile).
+#
+#   cp apps/api/src/main/resources/application-local.example.yml \
+#      apps/api/src/main/resources/application-local.yml
+#   export SPRING_PROFILES_ACTIVE=local
+#   cd apps/api && ./gradlew bootRun
+#
+# Values here override application.yml for keys you set. You can also rely on
+# environment variables only (see repo root .env.example) — Spring maps
+# DATABASE_URL, JWT_SECRET, etc. without this file.
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:25432/sell_online
+    username: sell_online
+    password: sell_online
+
+app:
+  jwt:
+    secret: change-me-in-production-min-256-bits-long-secret-key

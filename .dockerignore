@@ -1,0 +1,15 @@
+.git
+.github
+**/.next
+**/node_modules
+**/build
+**/.gradle
+**/dist
+**/*.log
+.env
+.env.*
+!.env.docker.example
+.DS_Store
+terminals
+.cursor
+uploads

@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: sell-online-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/sell_online}
+    username: ${DATABASE_USERNAME:sell_online}
+    password: ${DATABASE_PASSWORD:sell_online}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  mail:
+    host: ${MAIL_HOST:smtp.resend.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:resend}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production-min-256-bits-long-secret-key}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}  # 24h
+  paypal:
+    client-id: ${PAYPAL_CLIENT_ID:}
+    client-secret: ${PAYPAL_CLIENT_SECRET:}
+    webhook-id: ${PAYPAL_WEBHOOK_ID:}
+    mode: ${PAYPAL_MODE:sandbox}
+    base-url: ${PAYPAL_BASE_URL:https://api-m.sandbox.paypal.com}
+    return-url: ${PAYPAL_RETURN_URL:http://localhost:3001/checkout/success}
+    cancel-url: ${PAYPAL_CANCEL_URL:http://localhost:3001/checkout/cancelled}
+  s3:
+    endpoint: ${S3_ENDPOINT:https://s3.amazonaws.com}
+    region: ${S3_REGION:us-east-1}
+    bucket: ${S3_BUCKET:sell-online-assets}
+    access-key: ${S3_ACCESS_KEY:}
+    secret-key: ${S3_SECRET_KEY:}
+    signed-url-ttl-minutes: ${S3_SIGNED_URL_TTL:60}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}
+  mail-from: ${MAIL_FROM:noreply@your-domain.com}
+  store-name: ${STORE_NAME:IT Solutions Store}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

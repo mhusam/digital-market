@@ -1,0 +1,73 @@
+/* Design tokens — brand + semantic surfaces (light / dark via .dark on :root) */
+
+:root {
+  /* Brand (stable across themes) */
+  --yellow: #f7c945;
+  --yellow-deep: #e8b62e;
+  --pink: #ff8fa3;
+  --coral: #ff7a59;
+  --blue: #6fa8ff;
+  --teal: #2bc4a8;
+  --violet: #8b7cf6;
+  --cream: #ffe9a8;
+
+  /* Light theme — text & surfaces */
+  --ink: #1b1b1b;
+  --ink-soft: #4a4844;
+  --paper: #fffdf6;
+  --card: #ffffff;
+  --soft: #e8e4d9;
+  /* Slightly darker than old #f1eee3 so panels separate from --field */
+
+  --field: #f3f2ed;
+  --line: #9a958b;
+  --line-faint: #c9c4ba;
+
+  --muted-surface: rgba(232, 228, 217, 0.65);
+  --auth-outer: var(--soft);
+  --auth-card-shadow: 12px 12px 0 rgba(0, 0, 0, 0.14);
+  --main-inset-highlight: rgba(255, 255, 255, 0.55);
+
+  /* Typography */
+  --font-primary: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-accent: 'Caveat', cursive;
+  --font-weight-body: 500;
+  --font-weight-heading: 900;
+
+  --max-width: 1180px;
+  --page-padding: 28px;
+
+  --radius-pill: 999px;
+  --radius-card: 22px;
+  --radius-card-lg: 28px;
+  --radius-sm: 10px;
+  --radius-tag: 14px;
+
+  --transition-fast: 0.15s;
+
+  /* Elevation (Tailwind shadow-* utilities resolve via @theme) */
+  --fx-shadow-sm: 8px 8px 0 rgba(0, 0, 0, 0.08);
+  --fx-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
+  --fx-shadow-lg: 12px 12px 0 rgba(0, 0, 0, 0.12);
+}
+
+.dark {
+  --ink: #f2f1ec;
+  --ink-soft: #a8a6a0;
+  --paper: #121212;
+  --card: #1a1a18;
+  --soft: #0e0e0d;
+
+  --field: #222220;
+  --line: #6f6d68;
+  --line-faint: #3d3c39;
+
+  --muted-surface: rgba(34, 34, 32, 0.75);
+  --auth-outer: #0a0a0a;
+  --auth-card-shadow: 12px 12px 0 rgba(0, 0, 0, 0.55);
+  --main-inset-highlight: rgba(255, 255, 255, 0.04);
+
+  --fx-shadow-sm: 8px 8px 0 rgba(0, 0, 0, 0.35);
+  --fx-shadow: 10px 10px 0 rgba(0, 0, 0, 0.42);
+  --fx-shadow-lg: 12px 12px 0 rgba(0, 0, 0, 0.5);
+}

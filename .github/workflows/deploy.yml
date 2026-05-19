@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-admin:
+    name: Deploy ui-admin → Hostinger
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Hostinger Node.js App rebuild (ui-admin)
+        run: |
+          curl -s -X POST "${{ secrets.HOSTINGER_ADMIN_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body
+
+  deploy-customer:
+    name: Deploy ui-customer → Hostinger
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Hostinger Node.js App rebuild (ui-customer)
+        run: |
+          curl -s -X POST "${{ secrets.HOSTINGER_CUSTOMER_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body
+
+  deploy-api:
+    name: Deploy API → Hostinger VPS
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into VPS and update Docker Compose stack
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/sell-online
+            git pull origin main
+            docker compose --env-file .env.docker pull api
+            docker compose --env-file .env.docker up -d --no-deps api
+            docker image prune -f

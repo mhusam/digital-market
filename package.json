@@ -1,18 +1,18 @@
 {
-  "name": "digital-market",
-  "version": "1.0.0",
+  "name": "sell-online",
   "private": true,
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.12.1",
   "scripts": {
-    "dev": "turbo run dev",
     "build": "turbo run build",
+    "dev": "turbo run dev",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
-    "dev:customer": "pnpm --filter ui-customer dev",
-    "dev:admin": "pnpm --filter ui-admin dev",
-    "dev:backend": "pnpm --filter backend dev"
+    "format": "turbo run format",
+    "api:dev": "cd apps/api && ./gradlew bootRun --no-daemon",
+    "api:build": "cd apps/api && ./gradlew bootJar --no-daemon"
   },
   "devDependencies": {
+    "prettier": "^3.5.3",
     "turbo": "^2.5.4"
   }
 }

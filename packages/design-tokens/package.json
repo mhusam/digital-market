@@ -1,0 +1,16 @@
+{
+  "name": "@sell-online/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./tailwind": "./tailwind-preset.js",
+    "./css": "./tokens.css"
+  }
+}
