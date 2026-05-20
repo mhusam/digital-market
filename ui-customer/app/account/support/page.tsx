@@ -9,6 +9,7 @@ import { Button } from "../../../components/ui/Button";
 import { Card } from "../../../components/ui/Card";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { Skeleton } from "../../../components/ui/LoadingSkeleton";
+import { NativeSelect } from "../../../components/ui/NativeSelect";
 import {
   formatDate,
   priorityTone,
@@ -105,40 +106,32 @@ export default function AccountSupportPage() {
           </label>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
-                Priority
-              </span>
-              <select
-                value={priority}
-                onChange={(event) =>
-                  setPriority(event.target.value as SupportTicket["priority"])
-                }
-                className={INPUT_CLASS}
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="urgent">Urgent</option>
-              </select>
-            </label>
-            <label className="block">
-              <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
-                Related order
-              </span>
-              <select
-                value={orderId}
-                onChange={(event) => setOrderId(event.target.value)}
-                className={INPUT_CLASS}
-              >
-                <option value="">No order attached</option>
-                {orders.map((order) => (
-                  <option key={order.id} value={order.id}>
-                    {order.id} · {order.items[0]?.product?.title ?? "Product"}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <NativeSelect
+              label="Priority"
+              wrapperClassName="mt-1.5"
+              value={priority}
+              onChange={(event) =>
+                setPriority(event.target.value as SupportTicket["priority"])
+              }
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </NativeSelect>
+            <NativeSelect
+              label="Related order"
+              wrapperClassName="mt-1.5"
+              value={orderId}
+              onChange={(event) => setOrderId(event.target.value)}
+            >
+              <option value="">No order attached</option>
+              {orders.map((order) => (
+                <option key={order.id} value={order.id}>
+                  {order.id} · {order.items[0]?.product?.title ?? "Product"}
+                </option>
+              ))}
+            </NativeSelect>
           </div>
 
           <label className="block">

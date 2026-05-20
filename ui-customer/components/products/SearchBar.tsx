@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import type { Category } from "@digital-market/shared-types";
+import { NativeSelect } from "../ui/NativeSelect";
 
 interface SearchBarProps {
   categories: Category[];
@@ -39,10 +40,10 @@ export function SearchBar({
         isHero ? "max-w-2xl w-full" : "w-full"
       }`}
     >
-      <select
+      <NativeSelect
         value={cat}
         onChange={(e) => setCat(e.target.value)}
-        className="w-full sm:w-auto bg-[#F8FBFF] sm:bg-transparent text-[#1B1B1B] font-bold text-sm px-4 sm:pl-4 sm:pr-2 h-12 outline-none cursor-pointer rounded-full hover:bg-[#EFF6FF]"
+        variant="search"
         aria-label="Category"
       >
         <option value="">All</option>
@@ -51,7 +52,7 @@ export function SearchBar({
             {c.name}
           </option>
         ))}
-      </select>
+      </NativeSelect>
       <span className="hidden sm:block w-px h-6 bg-[#1B1B1B]/15" />
       <input
         value={q}

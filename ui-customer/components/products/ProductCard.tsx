@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ShoppingBag, Eye } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import type { Product } from "@digital-market/shared-types";
 import { ProductCover } from "./ProductCover";
 import { StarRating } from "../ui/StarRating";
@@ -15,6 +16,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const reduceMotion = useReducedMotion();
   const addItem = useCartStore((s) => s.addItem);
   const onAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -28,7 +30,14 @@ export function ProductCard({ product }: ProductCardProps) {
     typeof product.salePrice === "number" && product.salePrice < product.price;
 
   return (
-    <article className="card-lift group bg-white rounded-3xl overflow-hidden border border-[#1B1B1B]/5 shadow-[0_8px_28px_-12px_rgba(17,24,39,0.18)] flex flex-col">
+    <motion.article
+      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      whileHover={reduceMotion ? undefined : { y: -5 }}
+      viewport={{ once: true, amount: 0.18 }}
+      transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+      className="group flex flex-col overflow-hidden rounded-3xl border border-[#1B1B1B]/5 bg-white shadow-[0_8px_28px_-12px_rgba(17,24,39,0.18)] transition-shadow hover:shadow-[0_24px_54px_-22px_rgba(17,24,39,0.3)]"
+    >
       <Link href={`/products/${product.slug}`} className="block relative">
         <ProductCover seed={product.id} title={product.title} rounded="rounded-none" />
         {product.featured && (
@@ -99,6 +108,6 @@ export function ProductCard({ product }: ProductCardProps) {
           </button>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }

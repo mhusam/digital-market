@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import type { Category } from "@digital-market/shared-types";
+import { NativeSelect } from "../ui/NativeSelect";
 
 export interface FilterValues {
   categorySlug?: string;
@@ -53,23 +54,27 @@ export function FilterSidebar({
     <>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="lg:hidden btn-pill bg-[#1B1B1B] text-[#1E5FAF] h-11 px-5 text-sm mb-4"
+        className="btn-pill mb-4 h-11 border border-[#0F172A]/10 bg-[#0F172A] px-5 text-sm text-white shadow-[0_16px_32px_-22px_rgba(15,23,42,0.9)] hover:bg-[#1E40AF] lg:!hidden"
+        type="button"
+        aria-expanded={open}
       >
         <SlidersHorizontal size={14} strokeWidth={2.6} />
         Filters
-        <ChevronDown
-          size={14}
-          strokeWidth={2.6}
-          className={`transition-transform ${open ? "rotate-180" : ""}`}
-        />
+        <span className="ml-1 inline-flex size-6 items-center justify-center rounded-full bg-white/15">
+          <ChevronDown
+            size={14}
+            strokeWidth={2.8}
+            className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          />
+        </span>
       </button>
 
       <aside
-        className={`bg-white rounded-3xl p-6 border border-[#1B1B1B]/8 shadow-[0_8px_28px_-12px_rgba(17,24,39,0.18)] ${
+        className={`bg-white rounded-3xl border border-[#1B1B1B]/8 shadow-[0_8px_28px_-12px_rgba(17,24,39,0.18)] lg:h-screen lg:max-h-screen lg:rounded-none lg:border-y-0 lg:border-l-0 lg:overflow-y-auto lg:overscroll-contain lg:shadow-[18px_0_42px_-34px_rgba(15,23,42,0.45)] ${
           open ? "block" : "hidden lg:block"
         }`}
       >
-        <div className="flex items-center justify-between mb-5">
+        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-3xl border-b border-[#1B1B1B]/8 bg-white/95 px-6 py-5 backdrop-blur-md lg:rounded-none">
           <h3 className="font-black text-lg tracking-[-0.02em]">Filters</h3>
           <button
             onClick={reset}
@@ -79,88 +84,91 @@ export function FilterSidebar({
           </button>
         </div>
 
-        <Section title="Category">
-          <div className="space-y-1.5">
-            <RadioRow
-              label="All categories"
-              checked={!values.categorySlug}
-              onChange={() => onChange({ ...values, categorySlug: undefined })}
-            />
-            {categories.map((c) => (
+        <div className="p-6">
+          <Section title="Category">
+            <div className="space-y-1.5">
               <RadioRow
-                key={c.id}
-                label={`${c.name}`}
-                meta={c.productCount}
-                checked={values.categorySlug === c.slug}
-                onChange={() => onChange({ ...values, categorySlug: c.slug })}
+                label="All categories"
+                checked={!values.categorySlug}
+                onChange={() => onChange({ ...values, categorySlug: undefined })}
               />
-            ))}
-          </div>
-        </Section>
-
-        <Section title="Price">
-          <div className="grid grid-cols-2 gap-2">
-            <NumberInput
-              placeholder="Min $"
-              value={values.minPrice}
-              onChange={(v) => onChange({ ...values, minPrice: v })}
-            />
-            <NumberInput
-              placeholder="Max $"
-              value={values.maxPrice}
-              onChange={(v) => onChange({ ...values, maxPrice: v })}
-            />
-          </div>
-        </Section>
-
-        <Section title="License">
-          <select
-            value={values.licenseType ?? ""}
-            onChange={(e) =>
-              onChange({
-                ...values,
-                licenseType: e.target.value || undefined,
-              })
-            }
-            className="w-full h-11 px-4 rounded-2xl bg-[#EFF6FF] text-[#1B1B1B] font-bold text-sm border-2 border-transparent focus:border-[#1B1B1B]"
-          >
-            {LICENSES.map((l) => (
-              <option key={l.value} value={l.value}>
-                {l.label}
-              </option>
-            ))}
-          </select>
-        </Section>
-
-        {tagOptions.length > 0 && (
-          <Section title="Tags" last>
-            <div className="flex flex-wrap gap-1.5">
-              {tagOptions.slice(0, 12).map((tag) => {
-                const active = values.tags.includes(tag.value);
-                return (
-                  <button
-                    key={tag.value}
-                    onClick={() =>
-                      onChange({
-                        ...values,
-                        tags: active
-                          ? values.tags.filter((x) => x !== tag.value)
-                          : [...values.tags, tag.value],
-                      })
-                    }
-                    className={`px-3 h-8 rounded-full text-[12px] font-bold transition-colors ${
-                      active
-                        ? "bg-[#1B1B1B] text-[#1E5FAF]"
-                        : "bg-[#EFF6FF] text-[#1B1B1B] hover:bg-[#EAF3FF]"
-                    }`}
-                  >
-                    {tag.label}
-                  </button>
-                );
-              })}
+              {categories.map((c) => (
+                <RadioRow
+                  key={c.id}
+                  label={`${c.name}`}
+                  meta={c.productCount}
+                  checked={values.categorySlug === c.slug}
+                  onChange={() => onChange({ ...values, categorySlug: c.slug })}
+                />
+              ))}
             </div>
           </Section>
-        )}
+
+          <Section title="Price">
+            <div className="grid grid-cols-2 gap-2">
+              <NumberInput
+                placeholder="Min $"
+                value={values.minPrice}
+                onChange={(v) => onChange({ ...values, minPrice: v })}
+              />
+              <NumberInput
+                placeholder="Max $"
+                value={values.maxPrice}
+                onChange={(v) => onChange({ ...values, maxPrice: v })}
+              />
+            </div>
+          </Section>
+
+          <Section title="License">
+            <NativeSelect
+              value={values.licenseType ?? ""}
+              onChange={(e) =>
+                onChange({
+                  ...values,
+                  licenseType: e.target.value || undefined,
+                })
+              }
+              variant="soft"
+              aria-label="License"
+            >
+              {LICENSES.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
+                </option>
+              ))}
+            </NativeSelect>
+          </Section>
+
+          {tagOptions.length > 0 && (
+            <Section title="Tags" last>
+              <div className="flex flex-wrap gap-1.5">
+                {tagOptions.slice(0, 12).map((tag) => {
+                  const active = values.tags.includes(tag.value);
+                  return (
+                    <button
+                      key={tag.value}
+                      onClick={() =>
+                        onChange({
+                          ...values,
+                          tags: active
+                            ? values.tags.filter((x) => x !== tag.value)
+                            : [...values.tags, tag.value],
+                        })
+                      }
+                      className={`px-3 h-8 rounded-full text-[12px] font-bold transition-colors ${
+                        active
+                          ? "bg-[#1B1B1B] text-[#1E5FAF]"
+                          : "bg-[#EFF6FF] text-[#1B1B1B] hover:bg-[#EAF3FF]"
+                      }`}
+                    >
+                      {tag.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </Section>
+          )}
+        </div>
       </aside>
     </>
   );

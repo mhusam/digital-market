@@ -8,14 +8,14 @@
   --color-yellow-deep: #1E40AF;
   --color-ink: #0F172A;
   --color-ink-soft: #334155;
-  --color-paper: #FFFFFF;
+  --color-paper: #F4F7F8;
   --color-coral: #0EA5E9;
   --color-teal: #0D9488;
   --color-violet: #2563EB;
   --color-pink: #0284C7;
   --color-blue: #38BDF8;
-  --color-cream: #EFF6FF;
-  --color-soft: #EFF6FF;
+  --color-cream: #DDE6EA;
+  --color-soft: #E7EEF1;
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-caveat), ui-serif, cursive;
 }
@@ -32,7 +32,10 @@ html {
 }
 
 body {
-  background-color: #FDFBF7;
+  background:
+    linear-gradient(180deg, #EEF2F3 0%, #DDE7EB 42%, #CBD5DA 100%);
+  background-attachment: fixed;
+  background-color: #DDE7EB;
   color: #0F172A;
   font-family: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   font-weight: 500;
@@ -57,8 +60,8 @@ h1, h2, h3, h4, h5 {
 }
 
 .background-beams {
-  opacity: 0.56;
-  mix-blend-mode: multiply;
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
   mask-image:
     radial-gradient(ellipse at 50% 10%, black 0%, black 48%, transparent 78%),
     linear-gradient(to bottom, black 0%, black 68%, transparent 100%);
@@ -70,7 +73,7 @@ h1, h2, h3, h4, h5 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #1E40AF;
+  background: #152033;
   color: #FFFFFF;
   padding: 6px 14px;
   border-radius: 999px;
@@ -80,8 +83,8 @@ h1, h2, h3, h4, h5 {
   letter-spacing: 0.18em;
 }
 .eyebrow.light {
-  background: rgba(255, 255, 255, 0.95);
-  color: #1B1B1B;
+  background: rgba(244, 247, 248, 0.92);
+  color: #152033;
 }
 
 .scribble {
@@ -184,7 +187,7 @@ h1, h2, h3, h4, h5 {
 .btn-pill:hover { transform: translateY(-2px); }
 .btn-pill:active { transform: translateY(0); }
 .btn-pill:focus-visible {
-  outline: 3px solid #2563EB;
+  outline: 3px solid #38BDF8;
   outline-offset: 3px;
 }
 

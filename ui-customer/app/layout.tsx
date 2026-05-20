@@ -44,8 +44,12 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col relative">
         <BgShapes />
         <Navbar />
-        <main className="flex-1 relative z-10">{children}</main>
-        <Footer />
+        <main className="flex-1 relative z-10 pt-16 md:pl-[78px] md:pt-0">
+          {children}
+        </main>
+        <div className="relative z-10 md:pl-[78px]">
+          <Footer />
+        </div>
         <ToastContainer />
       </body>
     </html>

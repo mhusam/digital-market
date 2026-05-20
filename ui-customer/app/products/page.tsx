@@ -14,6 +14,7 @@ import { FilterSidebar, type FilterValues, type TagOption } from "../../componen
 import { ProductGrid } from "../../components/products/ProductGrid";
 import { Pagination } from "../../components/ui/Pagination";
 import { Breadcrumb } from "../../components/ui/Breadcrumb";
+import { NativeSelect } from "../../components/ui/NativeSelect";
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest" },
@@ -86,7 +87,7 @@ export default function ProductsPage() {
   );
 
   return (
-    <div className="max-w-[1280px] mx-auto px-5 md:px-8 pt-8 md:pt-12 pb-20">
+    <div className="mx-auto max-w-[1280px] px-5 pt-8 pb-20 md:px-8 md:pt-12 lg:max-w-none lg:pl-[312px] xl:pl-[352px]">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
       <div className="mt-6 mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
@@ -98,54 +99,54 @@ export default function ProductsPage() {
             </span>
           </h1>
         </div>
-        <div className="flex items-center gap-2 bg-white rounded-full p-1.5 border border-[#1B1B1B]/8 shadow-sm">
+        <div className="flex items-center gap-2 rounded-full border border-[#1B1B1B]/8 bg-white p-1.5 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.55)] transition-shadow hover:shadow-[0_18px_40px_-28px_rgba(15,23,42,0.65)]">
           <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60 pl-3">
             Sort
           </span>
-          <select
+          <NativeSelect
             value={sortBy}
             onChange={(e) => {
               setLoading(true);
               setSortBy(e.target.value as SortBy);
               setPage(1);
             }}
-            className="bg-transparent h-9 pl-2 pr-3 font-bold text-sm cursor-pointer rounded-full"
+            variant="pill"
+            aria-label="Sort products"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
-        <div className="lg:col-span-3">
-          <FilterSidebar
-            categories={categories}
-            values={filters}
-            onChange={(v) => {
+      <div className="lg:fixed lg:bottom-0 lg:left-[78px] lg:top-0 lg:z-40 lg:w-[280px] xl:w-[320px]">
+        <FilterSidebar
+          categories={categories}
+          values={filters}
+          onChange={(v) => {
+            setLoading(true);
+            setFilters(v);
+            setPage(1);
+          }}
+          tagOptions={tagOptions}
+        />
+      </div>
+
+      <div className="min-w-0">
+        <ProductGrid products={products} loading={loading} />
+        {!loading && totalPages > 1 && (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onChange={(nextPage) => {
               setLoading(true);
-              setFilters(v);
-              setPage(1);
+              setPage(nextPage);
             }}
-            tagOptions={tagOptions}
           />
-        </div>
-        <div className="lg:col-span-9">
-          <ProductGrid products={products} loading={loading} />
-          {!loading && totalPages > 1 && (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              onChange={(nextPage) => {
-                setLoading(true);
-                setPage(nextPage);
-              }}
-            />
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
