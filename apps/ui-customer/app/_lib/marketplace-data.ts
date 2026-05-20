@@ -1,0 +1,110 @@
+export const products = [
+  {
+    slug: "launchkit",
+    name: "LaunchKit",
+    category: "Next starter",
+    price: "$79",
+    rating: "4.9",
+    accent: "Auth, billing, emails",
+    description: "A production-ready SaaS starter with onboarding, transactional email, and checkout screens.",
+  },
+  {
+    slug: "signal-api",
+    name: "Signal API",
+    category: "Backend toolkit",
+    price: "$129",
+    rating: "4.8",
+    accent: "Jobs, queues, webhooks",
+    description: "Infrastructure primitives for background work, signed webhooks, and usage events.",
+  },
+  {
+    slug: "console-ui",
+    name: "Console UI",
+    category: "Interface system",
+    price: "$59",
+    rating: "4.9",
+    accent: "Dark admin components",
+    description: "A compact component kit for internal tools, dashboards, settings, and audit views.",
+  },
+  {
+    slug: "licenseflow",
+    name: "LicenseFlow",
+    category: "Commerce add-on",
+    price: "$89",
+    rating: "4.7",
+    accent: "Keys, seats, renewals",
+    description: "Issue license keys, track seats, and keep product access clear after purchase.",
+  },
+  {
+    slug: "docforge",
+    name: "DocForge",
+    category: "Docs template",
+    price: "$49",
+    rating: "4.8",
+    accent: "Guides, changelog, API docs",
+    description: "Documentation pages designed for polished technical launches and support workflows.",
+  },
+  {
+    slug: "metricbeam",
+    name: "MetricBeam",
+    category: "Analytics layer",
+    price: "$99",
+    rating: "4.6",
+    accent: "Events, funnels, exports",
+    description: "Track activation and purchase signals with a tidy schema and lightweight dashboards.",
+  },
+  {
+    slug: "deploydesk",
+    name: "DeployDesk",
+    category: "Ops workflow",
+    price: "$149",
+    rating: "4.9",
+    accent: "Deploy notes, checks, rollback",
+    description: "Release coordination screens for small teams shipping code and templates weekly.",
+  },
+  {
+    slug: "supportline",
+    name: "SupportLine",
+    category: "Creator support",
+    price: "$69",
+    rating: "4.7",
+    accent: "Tickets, SLA, snippets",
+    description: "A support workspace for creators managing buyer questions and update promises.",
+  },
+];
+
+export const cartItems = [products[0], products[2], products[4]];
+
+export const orders = [
+  {
+    reference: "SO-8F41A2C9",
+    status: "Ready",
+    date: "May 20, 2026",
+    product: "LaunchKit",
+    total: "$79",
+    note: "License key issued and download available.",
+  },
+  {
+    reference: "SO-2C70D1B4",
+    status: "Processing",
+    date: "May 18, 2026",
+    product: "Console UI",
+    total: "$59",
+    note: "Creator support window confirmed.",
+  },
+  {
+    reference: "SO-91B5E4F8",
+    status: "Paid",
+    date: "May 12, 2026",
+    product: "DocForge",
+    total: "$49",
+    note: "Receipt sent to husam@example.com.",
+  },
+];
+
+export const orderSummary = {
+  subtotal: "$187",
+  platformFee: "$0",
+  total: "$187",
+  reference: "SO-24A91E7C",
+};

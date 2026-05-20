@@ -156,6 +156,12 @@ class CatalogService implements CatalogFacade {
                 .build()).url().toString();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public long countProducts() {
+        return productRepo.count();
+    }
+
     @Override @Transactional
     public void removeAsset(UUID assetId) {
         ProductAsset a = assetRepo.findById(assetId)

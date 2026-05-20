@@ -22,4 +22,5 @@ public interface CatalogFacade {
     AssetDto attachAsset(UUID productId, MultipartFile file);
     String getDownloadUrl(UUID assetId);
     void removeAsset(UUID assetId);
+    long countProducts();
 }

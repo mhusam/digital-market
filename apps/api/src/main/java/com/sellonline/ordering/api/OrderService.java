@@ -2,11 +2,14 @@ package com.sellonline.ordering.api;
 
 import com.sellonline.catalog.api.CatalogFacade;
 import com.sellonline.ordering.api.CreateOrderCommand;
+import com.sellonline.ordering.api.DashboardOrderData;
+import com.sellonline.ordering.api.MonthlySalesDto;
 import com.sellonline.ordering.api.OrderDto;
 import com.sellonline.ordering.api.OrderLineDto;
 import com.sellonline.ordering.api.OrderLineRequest;
 import com.sellonline.ordering.api.OrderingException;
 import com.sellonline.ordering.api.OrderingFacade;
+import com.sellonline.ordering.api.TopProductDto;
 import com.sellonline.ordering.domain.Order;
 import com.sellonline.ordering.domain.OrderLine;
 import com.sellonline.ordering.domain.OrderStatus;
@@ -23,8 +26,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -154,6 +166,88 @@ public class OrderService implements OrderingFacade {
     public void resendConfirmationEmail(UUID id) {
         Order o = getOrThrow(id);
         events.publishEvent(new ResendOrderEmailEvent(o.getId(), o.getCustomerEmail()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DashboardOrderData getOrderDashboardData(int months, int topN, int recentN) {
+        List<OrderStatus> paidStatuses = List.of(OrderStatus.PAID, OrderStatus.FULFILLED);
+        List<Order> allOrders = orderRepo.findAllWithLines();
+
+        long totalOrders = allOrders.size();
+        BigDecimal totalRevenue = allOrders.stream()
+                .filter(o -> paidStatuses.contains(o.getStatus()))
+                .map(Order::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        YearMonth now = YearMonth.now();
+        BigDecimal thisMonthRev = revenueForMonth(allOrders, now, paidStatuses);
+        BigDecimal prevMonthRev = revenueForMonth(allOrders, now.minusMonths(1), paidStatuses);
+        long thisMonthCount = countForMonth(allOrders, now);
+        long prevMonthCount = countForMonth(allOrders, now.minusMonths(1));
+
+        // Sales chart: last N months
+        List<MonthlySalesDto> chart = new ArrayList<>();
+        for (int i = months - 1; i >= 0; i--) {
+            YearMonth ym = now.minusMonths(i);
+            chart.add(new MonthlySalesDto(
+                    ym.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH),
+                    revenueForMonth(allOrders, ym, paidStatuses),
+                    countForMonth(allOrders, ym)));
+        }
+
+        // Top products by revenue
+        Map<UUID, String> titles = new HashMap<>();
+        Map<UUID, BigDecimal> revenues = new HashMap<>();
+        Map<UUID, Long> counts = new HashMap<>();
+        allOrders.stream()
+                .filter(o -> paidStatuses.contains(o.getStatus()))
+                .flatMap(o -> o.getLines().stream())
+                .forEach(l -> {
+                    titles.put(l.getProductId(), l.getProductTitle());
+                    revenues.merge(l.getProductId(),
+                            l.getUnitPrice().multiply(BigDecimal.valueOf(l.getQuantity())),
+                            BigDecimal::add);
+                    counts.merge(l.getProductId(), 1L, Long::sum);
+                });
+
+        List<TopProductDto> topProducts = revenues.entrySet().stream()
+                .sorted(Map.Entry.<UUID, BigDecimal>comparingByValue().reversed())
+                .limit(topN)
+                .map(e -> new TopProductDto(e.getKey(), titles.get(e.getKey()), e.getValue(),
+                        counts.getOrDefault(e.getKey(), 0L)))
+                .toList();
+
+        List<OrderDto> recent = orderRepo.findTop5ByOrderByCreatedAtDesc().stream()
+                .map(this::toDto).toList();
+
+        return new DashboardOrderData(totalOrders, totalRevenue,
+                growth(prevMonthRev, thisMonthRev),
+                growth(BigDecimal.valueOf(prevMonthCount), BigDecimal.valueOf(thisMonthCount)),
+                chart, topProducts, recent);
+    }
+
+    private BigDecimal revenueForMonth(List<Order> orders, YearMonth ym, List<OrderStatus> statuses) {
+        return orders.stream()
+                .filter(o -> statuses.contains(o.getStatus()) && YearMonth.from(
+                        o.getCreatedAt().atZone(ZoneOffset.UTC)).equals(ym))
+                .map(Order::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private long countForMonth(List<Order> orders, YearMonth ym) {
+        return orders.stream()
+                .filter(o -> YearMonth.from(o.getCreatedAt().atZone(ZoneOffset.UTC)).equals(ym))
+                .count();
+    }
+
+    private double growth(BigDecimal prev, BigDecimal curr) {
+        if (prev == null || prev.compareTo(BigDecimal.ZERO) == 0) return 0.0;
+        return (curr == null ? BigDecimal.ZERO : curr)
+                .subtract(prev)
+                .divide(prev, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100))
+                .doubleValue();
     }
 
     private Order getOrThrow(UUID id) {

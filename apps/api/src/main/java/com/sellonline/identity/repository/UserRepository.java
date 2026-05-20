@@ -1,6 +1,7 @@
 package com.sellonline.identity.repository;
 
 import com.sellonline.identity.domain.User;
+import com.sellonline.identity.domain.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByLoginIgnoreCase(@Param("login") String login);
 
     Optional<User> findByPasswordResetToken(String token);
+    long countByRole(UserRole role);
 }

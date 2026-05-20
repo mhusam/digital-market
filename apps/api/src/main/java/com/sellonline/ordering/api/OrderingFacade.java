@@ -20,4 +20,5 @@ public interface OrderingFacade {
     OrderDto addNote(UUID orderId, String note);
     OrderDto transitionToPaid(UUID orderId);  // called by Payments module
     void resendConfirmationEmail(UUID orderId);
+    DashboardOrderData getOrderDashboardData(int months, int topN, int recentN);
 }

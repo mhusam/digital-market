@@ -113,6 +113,12 @@ class IdentityService implements IdentityFacade {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public long countCustomers() {
+        return userRepository.countByRole(UserRole.CUSTOMER);
+    }
+
+    @Override
     public UserDto getUserFromToken(String token) {
         var claims = jwtService.parse(token);
         UUID id = UUID.fromString(claims.getSubject());

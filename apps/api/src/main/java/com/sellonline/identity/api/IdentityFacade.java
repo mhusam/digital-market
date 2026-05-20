@@ -14,4 +14,5 @@ public interface IdentityFacade {
     void deleteAccount(UUID userId);
     boolean validateToken(String token);
     UserDto getUserFromToken(String token);
+    long countCustomers();
 }
