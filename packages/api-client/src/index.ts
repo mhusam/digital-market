@@ -14,7 +14,6 @@ import type {
   StaticPage,
   StoreSetting,
   SupportTicket,
-  Tag,
   User,
 } from "@digital-market/shared-types";
 
@@ -49,12 +48,13 @@ function toPage<T>(p: SpringPage<T>): PaginatedResponse<T> {
 
 let _token: string | null = null;
 let _http: AxiosInstance | null = null;
+let _onUnauthorized: (() => void) | null = null;
 
 function getHttp(): AxiosInstance {
   if (_http) return _http;
   _http = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080",
-    timeout: parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT ?? "30000"),
+    timeout: parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT ?? "30000", 10),
   });
   _http.interceptors.request.use((config) => {
     if (_token) config.headers.Authorization = `Bearer ${_token}`;
@@ -65,7 +65,7 @@ function getHttp(): AxiosInstance {
     (err) => {
       if (err.response?.status === 401) {
         _token = null;
-        if (typeof window !== "undefined") window.location.href = "/admin/login";
+        _onUnauthorized?.();
       }
       return Promise.reject(err);
     }
@@ -75,6 +75,10 @@ function getHttp(): AxiosInstance {
 
 export function setAuthToken(token: string | null): void {
   _token = token;
+}
+
+export function setUnauthorizedHandler(handler: (() => void) | null): void {
+  _onUnauthorized = handler;
 }
 
 function wrap<T>(data: T): ApiResponse<T> {
@@ -89,7 +93,7 @@ function wrapErr(err: unknown): ApiResponse<never> {
   return { success: false, message: String(err) };
 }
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
+// ─── Auth (admin) ─────────────────────────────────────────────────────────────
 
 export async function adminLogin(params: {
   email: string;
@@ -109,6 +113,88 @@ export async function adminLogin(params: {
 export async function adminLogout(): Promise<ApiResponse<void>> {
   setAuthToken(null);
   return { success: true };
+}
+
+// ─── Auth (customer / storefront) ────────────────────────────────────────────
+
+export async function customerRegister(params: {
+  email: string;
+  password: string;
+  name: string;
+}): Promise<ApiResponse<{ user: User; token: string }>> {
+  try {
+    const { data } = await getHttp().post<{ token: string; user: User }>(
+      "/api/v1/auth/register",
+      params
+    );
+    return wrap({ user: data.user, token: data.token });
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function customerLogin(params: {
+  login: string;
+  password: string;
+}): Promise<ApiResponse<{ user: User; token: string }>> {
+  try {
+    const { data } = await getHttp().post<{ token: string; user: User }>(
+      "/api/v1/auth/login",
+      params
+    );
+    return wrap({ user: data.user, token: data.token });
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function customerGetMe(): Promise<ApiResponse<User>> {
+  try {
+    const { data } = await getHttp().get<User>("/api/v1/auth/me");
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function customerUpdateProfile(params: {
+  name?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}): Promise<ApiResponse<User>> {
+  try {
+    const { data } = await getHttp().put<User>("/api/v1/auth/me", params);
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function customerDeleteAccount(): Promise<ApiResponse<void>> {
+  try {
+    await getHttp().delete("/api/v1/auth/me");
+    return { success: true };
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function customerForgotPassword(login: string): Promise<ApiResponse<{ message: string }>> {
+  try {
+    const { data } = await getHttp().post<{ message: string }>("/api/v1/auth/forgot-password", { login });
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function customerResetPassword(token: string, password: string): Promise<ApiResponse<{ message: string }>> {
+  try {
+    const { data } = await getHttp().post<{ message: string }>("/api/v1/auth/reset-password", { token, password });
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
@@ -153,7 +239,7 @@ export async function getDashboard(): Promise<ApiResponse<DashboardStats>> {
   }
 }
 
-// ─── Products ─────────────────────────────────────────────────────────────────
+// ─── Products (admin) ─────────────────────────────────────────────────────────
 
 export async function adminGetProducts(
   page = 1,
@@ -278,7 +364,219 @@ export async function adminDeleteAsset(assetId: string): Promise<ApiResponse<voi
   }
 }
 
-// ─── Orders ───────────────────────────────────────────────────────────────────
+// ─── Products (storefront) ────────────────────────────────────────────────────
+
+export interface StoreProductFilters {
+  search?: string;
+  type?: string;
+  tags?: string[];
+  priceMin?: number;
+  priceMax?: number;
+  sort?: "newest" | "oldest" | "price_asc" | "price_desc" | "name_asc" | "name_desc";
+  page?: number;
+  pageSize?: number;
+}
+
+export interface StoreProductFacets {
+  offeringTypes: string[];
+  techTags: string[];
+  minPrice: number | null;
+  maxPrice: number | null;
+}
+
+function buildStoreProductParams(filters: StoreProductFilters): Record<string, string | number | string[]> {
+  const params: Record<string, string | number | string[]> = {
+    page: (filters.page ?? 1) - 1,
+    size: filters.pageSize ?? 20,
+  };
+
+  if (filters.search) params.search = filters.search;
+  if (filters.type) params.type = filters.type;
+  if (filters.tags?.length) params.tags = filters.tags;
+  if (filters.priceMin !== undefined) params.priceMin = filters.priceMin;
+  if (filters.priceMax !== undefined) params.priceMax = filters.priceMax;
+  if (filters.sort) params.sort = filters.sort;
+
+  return params;
+}
+
+export async function storeListProducts(
+  filters: StoreProductFilters = {}
+): Promise<PaginatedResponse<Product>> {
+  try {
+    const { data } = await getHttp().get<SpringPage<Product>>("/api/v1/store/products", {
+      params: buildStoreProductParams(filters),
+    });
+    return toPage(data);
+  } catch {
+    return {
+      data: [],
+      total: 0,
+      page: filters.page ?? 1,
+      pageSize: filters.pageSize ?? 20,
+    };
+  }
+}
+
+export async function storeGetProduct(slug: string): Promise<ApiResponse<Product>> {
+  try {
+    const { data } = await getHttp().get<Product>(`/api/v1/store/products/${slug}`);
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function storeGetProductFacets(
+  filters: Pick<StoreProductFilters, "search" | "type" | "priceMin" | "priceMax"> = {}
+): Promise<ApiResponse<StoreProductFacets>> {
+  try {
+    const { data } = await getHttp().get<StoreProductFacets>("/api/v1/store/products/facets", {
+      params: {
+        search: filters.search,
+        type: filters.type,
+        priceMin: filters.priceMin,
+        priceMax: filters.priceMax,
+      },
+    });
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+// ─── Orders / checkout / fulfillment (storefront) ────────────────────────────
+
+export interface CheckoutLineInput {
+  productId: string;
+  quantity: number;
+}
+
+export interface StoreCheckoutPayload {
+  customerEmail: string;
+  customerName: string;
+  lines: CheckoutLineInput[];
+  paymentMethod: "PAYPAL" | "BANK_TRANSFER";
+}
+
+export interface CreatePayPalOrderResult {
+  paypalOrderId: string;
+  approvalUrl: string;
+}
+
+export interface CapturePayPalOrderResult {
+  captureId: string | null;
+  status: string;
+}
+
+export interface DownloadLink {
+  assetId: string;
+  filename: string;
+  url: string;
+  expiresInMinutes: number;
+}
+
+export async function storeCreateCheckoutOrder(payload: StoreCheckoutPayload): Promise<ApiResponse<Order>> {
+  try {
+    const { data } = await getHttp().post<Order>("/api/v1/store/checkout", payload);
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function storeCreatePayPalOrder(orderId: string): Promise<ApiResponse<CreatePayPalOrderResult>> {
+  try {
+    const { data } = await getHttp().post<CreatePayPalOrderResult>(
+      "/api/v1/store/checkout/paypal/create",
+      { orderId }
+    );
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function storeCapturePayPalOrder(
+  orderId: string,
+  paypalOrderId: string
+): Promise<ApiResponse<CapturePayPalOrderResult>> {
+  try {
+    const { data } = await getHttp().post<CapturePayPalOrderResult>(
+      "/api/v1/store/checkout/paypal/capture",
+      { orderId, paypalOrderId }
+    );
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function storeGetOrderByConfirmationToken(
+  token: string
+): Promise<ApiResponse<Order>> {
+  try {
+    const { data } = await getHttp().get<Order>(`/api/v1/store/orders/confirmation/${token}`);
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function storeGetCustomerOrders(
+  page = 1,
+  pageSize = 20
+): Promise<PaginatedResponse<Order>> {
+  try {
+    const { data } = await getHttp().get<SpringPage<Order>>("/api/v1/store/customer/orders", {
+      params: { page: page - 1, size: pageSize },
+    });
+    return toPage(data);
+  } catch {
+    return { data: [], total: 0, page, pageSize };
+  }
+}
+
+export async function storeGetCustomerOrder(orderId: string): Promise<ApiResponse<Order>> {
+  try {
+    const { data } = await getHttp().get<Order>(`/api/v1/store/customer/orders/${orderId}`);
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function storeResendOrderEmail(orderId: string): Promise<ApiResponse<void>> {
+  try {
+    await getHttp().post(`/api/v1/store/orders/${orderId}/resend-email`);
+    return { success: true };
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+export async function storeGetOrderDownloads(orderId: string): Promise<ApiResponse<DownloadLink[]>> {
+  try {
+    const { data } = await getHttp().get<DownloadLink[]>(`/api/v1/store/orders/${orderId}/downloads`);
+    return wrap(data);
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+// ─── Settings / legal (storefront) ────────────────────────────────────────────
+
+export async function storeGetPublicSettings(): Promise<ApiResponse<Record<string, string>>> {
+  try {
+    const { data } = await getHttp().get<StoreSetting[]>("/api/v1/store/settings");
+    const entries = data.map((item) => [item.key, item.value ?? ""] as const);
+    return wrap(Object.fromEntries(entries));
+  } catch (err) {
+    return wrapErr(err);
+  }
+}
+
+// ─── Orders (admin) ───────────────────────────────────────────────────────────
 
 export async function adminGetOrders(
   page = 1,
@@ -544,32 +842,42 @@ export async function adminCustomersReport(): Promise<ApiResponse<CustomerReport
   return { success: true, data: [] };
 }
 
-// ─── Mock data kept for section page compatibility ─────────────────────────────
+// ─── Legacy mock storefront surface ────────────────────────────────────────────
 
-export const mockProducts: Product[] = [];
-export const mockCustomers: User[] = [];
-export const mockOrders: Order[] = [];
+export {
+  mockProducts,
+  mockCustomers,
+  mockOrders,
+  mockDownloads,
+  mockBlogPosts,
+} from "./mock-data";
 
-export const mockDownloads: Array<{
-  productId: string;
-  userId: string;
-  orderId: string;
-  downloadCount: number;
-  downloadLimit: number;
-  createdAt: string;
-  fileId: string;
-}> = [];
+export * from "./public-api";
 
-export const mockBlogPosts: Array<{
-  id: string;
-  title: string;
-  slug: string;
-  status: string;
-  readingTimeMinutes: number;
-  publishedAt?: string;
-  createdAt: string;
-  tags: { name: string }[];
-}> = [];
+export {
+  hydrateCustomerSession,
+  register,
+  login,
+  logout,
+  forgotPassword,
+  resetPassword,
+  getMe,
+  updateMe,
+  getCart,
+  addCartItem,
+  removeCartItem,
+  validateCoupon,
+  checkout,
+  getOrders,
+  getOrder,
+  getInvoice,
+  getDownloads,
+  requestDownloadLink,
+  getTickets,
+  createTicket,
+  getTicket,
+  replyToTicket,
+} from "./customer-api";
 
 // Legacy category stubs (no backend support)
 export async function adminGetCategories(): Promise<ApiResponse<Category[]>> {

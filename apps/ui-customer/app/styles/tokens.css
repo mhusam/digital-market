@@ -1,0 +1,42 @@
+:root {
+  --background: #070709;
+  --background-elevated: #0c0c10;
+  --foreground: #f6f6f7;
+  --muted: #9a9aa3;
+  --muted-strong: #cfcfd4;
+  --panel: rgba(255, 255, 255, 0.05);
+  --panel-strong: rgba(255, 255, 255, 0.085);
+  --panel-hover: rgba(255, 255, 255, 0.11);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.22);
+  --border-focus: rgba(255, 255, 255, 0.55);
+
+  --accent: oklch(82% 0.14 78);
+  --accent-strong: oklch(88% 0.18 82);
+  --accent-ink: #1a1408;
+
+  --success: oklch(76% 0.16 152);
+  --success-soft: oklch(76% 0.16 152 / 0.18);
+  --warning: oklch(82% 0.15 78);
+  --warning-soft: oklch(82% 0.15 78 / 0.18);
+  --danger: oklch(70% 0.2 22);
+  --danger-soft: oklch(70% 0.2 22 / 0.2);
+  --info: oklch(78% 0.13 235);
+  --info-soft: oklch(78% 0.13 235 / 0.2);
+
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 16px 48px rgba(0, 0, 0, 0.36);
+  --shadow-lg: 0 28px 96px rgba(0, 0, 0, 0.5);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  --header-height: 68px;
+  --content-max: 1240px;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+}

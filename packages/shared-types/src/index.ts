@@ -22,6 +22,8 @@ export interface ProductAsset {
   previewUrl?: string;
 }
 
+export type OfferingType = "PRODUCT" | "PROJECT" | "SOLUTION";
+
 export interface Product {
   id: string;
   title: string;
@@ -30,6 +32,8 @@ export interface Product {
   price: number;
   currency: string;
   status: ProductStatus;
+  offeringType?: OfferingType;
+  techTags?: string[];
   assets: ProductAsset[];
   createdAt: string;
   updatedAt: string;
