@@ -6,8 +6,8 @@ import { CreditCard, Lock } from "lucide-react";
 import { useCartStore } from "../../store/cartStore";
 import { useAuthStore } from "../../store/authStore";
 import { CartSummary } from "../../components/cart/CartSummary";
-import { Breadcrumb } from "../../components/ui/Breadcrumb";
-import { EmptyState } from "../../components/ui/EmptyState";
+import { Breadcrumb } from "../../components/ui/route-breadcrumb";
+import { EmptyState } from "../../components/ui/app-empty-state";
 import { ProductCover } from "../../components/products/ProductCover";
 import { formatPrice } from "../../lib/cover";
 import { toast } from "../../store/toastStore";
@@ -80,12 +80,12 @@ export default function CheckoutPage() {
       <div className="grid lg:grid-cols-12 gap-8">
         <div className="lg:col-span-7 space-y-5">
           {/* Account */}
-          <div className="bg-white rounded-3xl p-6 border border-[#1B1B1B]/5">
+          <div className="bg-card rounded-3xl p-6 border border-border">
             <h3 className="font-black text-lg tracking-[-0.02em] mb-4">
-              <span className="text-[#0EA5E9] mr-2">1.</span>Account
+              <span className="text-primary mr-2">1.</span>Account
             </h3>
             <label className="block">
-              <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
+              <span className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
                 Email
               </span>
               <input
@@ -93,29 +93,29 @@ export default function CheckoutPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="you@example.com"
-                className="mt-1.5 w-full h-12 px-4 rounded-2xl bg-[#EFF6FF] font-bold text-sm border-2 border-transparent focus:border-[#1B1B1B]"
+                className="mt-1.5 w-full h-12 px-4 rounded-2xl bg-accent font-bold text-sm border-2 border-transparent focus:border-foreground"
               />
             </label>
-            <p className="mt-2 text-[12px] text-[#1B1B1B]/55 font-semibold">
+            <p className="mt-2 text-[12px] text-muted-foreground font-semibold">
               We&apos;ll send your downloads and invoice here.
             </p>
             {user ? (
-              <p className="mt-3 text-[12px] font-bold text-[#14B8A6]">
+              <p className="mt-3 text-[12px] font-bold text-emerald-500">
                 Signed in as {user.displayName}. Your receipt will stay attached to this mock account session.
               </p>
             ) : (
-              <p className="mt-3 text-[12px] font-bold text-[#1B1B1B]/55">
+              <p className="mt-3 text-[12px] font-bold text-muted-foreground">
                 Guest checkout is enabled for this phase. Enter any valid email to complete the flow.
               </p>
             )}
           </div>
 
           {/* Items */}
-          <div className="bg-white rounded-3xl p-6 border border-[#1B1B1B]/5">
+          <div className="bg-card rounded-3xl p-6 border border-border">
             <h3 className="font-black text-lg tracking-[-0.02em] mb-4">
-              <span className="text-[#0EA5E9] mr-2">2.</span>Items
+              <span className="text-primary mr-2">2.</span>Items
             </h3>
-            <ul className="divide-y divide-[#1B1B1B]/8">
+            <ul className="divide-y divide-border">
               {items.map((i) => (
                 <li key={i.id} className="py-3 flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0">
@@ -125,7 +125,7 @@ export default function CheckoutPage() {
                     <p className="font-black text-[15px] tracking-[-0.02em] truncate">
                       {i.title}
                     </p>
-                    <p className="text-[12px] font-bold text-[#1B1B1B]/60 uppercase tracking-[0.1em]">
+                    <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-[0.1em]">
                       {i.licenseType} license
                     </p>
                   </div>
@@ -136,34 +136,34 @@ export default function CheckoutPage() {
           </div>
 
           {/* Payment */}
-          <div className="bg-white rounded-3xl p-6 border border-[#1B1B1B]/5">
+          <div className="bg-card rounded-3xl p-6 border border-border">
             <h3 className="font-black text-lg tracking-[-0.02em] mb-4">
-              <span className="text-[#0EA5E9] mr-2">3.</span>Payment
+              <span className="text-primary mr-2">3.</span>Payment
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-[#EAF3FF] border-2 border-[#1B1B1B]">
+              <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-accent border-2 border-foreground">
                 <CreditCard size={16} strokeWidth={2.6} />
                 <span className="font-black text-sm">Credit / debit card</span>
-                <span className="ml-auto text-[11px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+                <span className="ml-auto text-[11px] font-black uppercase tracking-[0.14em] text-muted-foreground">
                   Secure
                 </span>
               </div>
               <label className="block">
-                <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
+                <span className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
                   Card number (test)
                 </span>
                 <input
                   value={card}
                   onChange={(e) => setCard(e.target.value)}
-                  className="mt-1.5 w-full h-12 px-4 rounded-2xl bg-[#EFF6FF] font-bold text-sm tracking-[0.1em] border-2 border-transparent focus:border-[#1B1B1B]"
+                  className="mt-1.5 w-full h-12 px-4 rounded-2xl bg-accent font-bold text-sm tracking-[0.1em] border-2 border-transparent focus:border-foreground"
                 />
               </label>
-              <p className="flex items-center gap-1.5 text-[12px] font-bold text-[#1B1B1B]/60">
+              <p className="flex items-center gap-1.5 text-[12px] font-bold text-muted-foreground">
                 <Lock size={11} strokeWidth={2.6} /> This is a simulation. No
                 real card will be charged.
               </p>
               {paymentMessage && (
-                <div className="rounded-2xl border border-[#2563EB]/25 bg-[#EEF4FF] px-4 py-3 text-[13px] font-semibold text-[#1E3A8A]">
+                <div className="rounded-2xl border border-primary/25 bg-accent/80 px-4 py-3 text-[13px] font-semibold text-primary">
                   {paymentMessage}
                 </div>
               )}

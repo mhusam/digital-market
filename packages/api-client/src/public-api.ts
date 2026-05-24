@@ -82,7 +82,7 @@ const applyProductFilters = (
 
   if (filters.tags && filters.tags.length > 0) {
     result = result.filter((p) =>
-      p.tags.some((t) => filters.tags!.includes(t.slug)),
+      (p.tags || []).some((t) => filters.tags!.includes(t.slug)),
     );
   }
 
@@ -95,7 +95,7 @@ const applyProductFilters = (
       );
       break;
     case 'popular':
-      result.sort((a, b) => b.salesCount - a.salesCount);
+      result.sort((a, b) => (b.salesCount ?? 0) - (a.salesCount ?? 0));
       break;
     case 'price_asc':
       result.sort(
@@ -108,7 +108,7 @@ const applyProductFilters = (
       );
       break;
     case 'rating':
-      result.sort((a, b) => b.rating - a.rating);
+      result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
       break;
   }
 
@@ -230,11 +230,11 @@ export const searchProducts = async (
 
   const matched = published.filter((p) => {
     return (
-      p.title.toLowerCase().includes(q) ||
-      p.shortDescription.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q) ||
-      p.tags.some((t) => t.name.toLowerCase().includes(q)) ||
-      p.technologies.some((tech) => tech.toLowerCase().includes(q))
+      (p.title ?? "").toLowerCase().includes(q) ||
+      (p.shortDescription ?? "").toLowerCase().includes(q) ||
+      (p.description ?? "").toLowerCase().includes(q) ||
+      (p.tags ?? []).some((t) => t.name.toLowerCase().includes(q)) ||
+      (p.technologies ?? []).some((tech) => tech.toLowerCase().includes(q))
     );
   });
 
@@ -279,7 +279,7 @@ export const getFAQs = async (): Promise<ApiResponse<FAQ[]>> => {
 
   const published = [...mockFAQs]
     .filter((f) => f.isPublished)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
   return { success: true, data: published };
 };

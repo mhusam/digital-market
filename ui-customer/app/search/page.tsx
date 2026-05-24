@@ -7,7 +7,7 @@ import {
   searchProducts,
 } from "@digital-market/api-client";
 import type { Category, Product } from "@digital-market/shared-types";
-import { Breadcrumb } from "../../components/ui/Breadcrumb";
+import { Breadcrumb } from "../../components/ui/route-breadcrumb";
 import { ProductGrid } from "../../components/products/ProductGrid";
 import { SearchBar } from "../../components/products/SearchBar";
 
@@ -59,13 +59,13 @@ function SearchInner() {
           {q ? (
             <>
               Results for{" "}
-              <span className="font-hand text-[#0EA5E9]">&ldquo;{q}&rdquo;</span>
+              <span className="font-hand text-primary">&ldquo;{q}&rdquo;</span>
             </>
           ) : (
             "Search Forge"
           )}
         </h1>
-        <p className="mt-2 text-[#1B1B1B]/70 font-bold">
+        <p className="mt-2 text-muted-foreground font-bold">
           {loading ? "Searching…" : `${total} matches`}
         </p>
       </div>

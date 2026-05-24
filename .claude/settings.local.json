@@ -22,7 +22,9 @@
       "Bash(grep -v \"^$\")",
       "Bash(npx eslint *)",
       "Bash(grep -E \"\\\\.tsx?:|\\\\.tsx?$\")",
-      "Bash(pnpm --filter ui-customer exec next build)"
+      "Bash(pnpm --filter ui-customer exec next build)",
+      "Bash(pnpm exec *)",
+      "Bash(echo \"exit=$?\")"
     ]
   }
 }

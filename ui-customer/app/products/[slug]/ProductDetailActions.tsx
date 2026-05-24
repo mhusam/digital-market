@@ -35,7 +35,7 @@ export function ProductDetailActions({ product }: Props) {
 
   return (
     <div className="mt-5">
-      <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60 mb-2">
+      <p className="text-[11px] font-black uppercase tracking-[0.14em] text-muted-foreground mb-2">
         Choose license
       </p>
       <div className="grid grid-cols-2 gap-2">
@@ -47,8 +47,8 @@ export function ProductDetailActions({ product }: Props) {
               onClick={() => setLicense(l.value)}
               className={`text-left rounded-2xl p-3 border-2 transition-colors ${
                 active
-                  ? "border-[#1B1B1B] bg-[#EAF3FF]"
-                  : "border-[#1B1B1B]/10 bg-white hover:border-[#1B1B1B]/30"
+                  ? "border-foreground bg-accent"
+                  : "border-border bg-card hover:border-border"
               }`}
             >
               <div className="flex items-center justify-between">
@@ -57,7 +57,7 @@ export function ProductDetailActions({ product }: Props) {
                   {formatPrice(base * l.mul)}
                 </span>
               </div>
-              <span className="text-[11px] font-bold text-[#1B1B1B]/60">
+              <span className="text-[11px] font-bold text-muted-foreground">
                 {l.desc}
               </span>
             </button>
@@ -66,7 +66,7 @@ export function ProductDetailActions({ product }: Props) {
       </div>
       <button
         onClick={onAdd}
-        className="btn-pill bg-[#1B1B1B] text-[#1E5FAF] hover:bg-black w-full h-14 text-[15px] mt-4"
+        className="btn-pill mt-4 h-14 w-full bg-primary text-[15px] text-primary-foreground hover:bg-primary/90"
       >
         <ShoppingBag size={16} strokeWidth={2.6} />
         Add to cart

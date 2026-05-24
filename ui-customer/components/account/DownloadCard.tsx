@@ -2,8 +2,8 @@
 
 import { Download as DownloadIcon, FileArchive } from "lucide-react";
 import type { Download, Product } from "@digital-market/shared-types";
-import { Badge } from "../ui/Badge";
 import { toast } from "../../store/toastStore";
+import { Badge } from "../ui/badge";
 
 interface DownloadCardProps {
   download: Download;
@@ -11,7 +11,9 @@ interface DownloadCardProps {
 }
 
 export function DownloadCard({ download, product }: DownloadCardProps) {
-  const remaining = Math.max(0, download.downloadLimit - download.downloadCount);
+  const downloadLimit = download.downloadLimit ?? 0;
+  const downloadCount = download.downloadCount ?? 0;
+  const remaining = Math.max(0, downloadLimit - downloadCount);
   const onDownload = () => {
     if (remaining === 0) {
       toast.error("Download limit reached", "Contact support for help.");
@@ -21,27 +23,28 @@ export function DownloadCard({ download, product }: DownloadCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 border border-[#1B1B1B]/5 shadow-[0_8px_24px_-14px_rgba(17,24,39,0.18)] flex items-center gap-4">
-      <div className="w-12 h-12 rounded-2xl bg-[#EAF3FF] inline-flex items-center justify-center flex-shrink-0">
-        <FileArchive size={20} strokeWidth={2.4} />
+    <div className="grid gap-4 rounded-lg border border-border bg-card p-4 shadow-sm sm:grid-cols-[48px_1fr_auto] sm:items-center">
+      <div className="inline-flex size-12 items-center justify-center rounded-lg bg-accent text-primary">
+        <FileArchive size={20} />
       </div>
-      <div className="flex-1 min-w-0">
-        <h4 className="font-black text-[16px] tracking-[-0.02em] truncate">
+      <div className="min-w-0">
+        <h3 className="truncate font-extrabold text-foreground">
           {product?.title ?? "Product file"}
-        </h4>
-        <div className="flex flex-wrap items-center gap-2 mt-1.5">
-          <Badge tone="warn">v{product?.version ?? "1.0.0"}</Badge>
-          <span className="text-[12px] font-bold text-[#1B1B1B]/60">
-            {download.downloadCount}/{download.downloadLimit} downloads used
+        </h3>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <Badge tone="blue">v{product?.version ?? "1.0.0"}</Badge>
+          <span className="text-sm text-muted-foreground">
+            {downloadCount}/{downloadLimit} used
           </span>
         </div>
       </div>
       <button
+        type="button"
         onClick={onDownload}
         disabled={remaining === 0}
-        className="btn-pill bg-[#1B1B1B] text-[#1E5FAF] h-11 px-5 text-sm disabled:opacity-40"
+        className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
       >
-        <DownloadIcon size={14} strokeWidth={2.6} />
+        <DownloadIcon size={16} />
         Download
       </button>
     </div>

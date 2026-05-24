@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import type { Category } from "@digital-market/shared-types";
-import { NativeSelect } from "../ui/NativeSelect";
+import { NativeSelect } from "../ui/native-select";
 
 interface SearchBarProps {
   categories: Category[];
   initialQuery?: string;
   initialCategory?: string;
   variant?: "hero" | "compact";
+  showCategory?: boolean;
 }
 
 export function SearchBar({
@@ -18,54 +19,55 @@ export function SearchBar({
   initialQuery = "",
   initialCategory = "",
   variant = "hero",
+  showCategory = true,
 }: SearchBarProps) {
   const router = useRouter();
-  const [q, setQ] = useState(initialQuery);
-  const [cat, setCat] = useState(initialCategory);
+  const [query, setQuery] = useState(initialQuery);
+  const [category, setCategory] = useState(initialCategory);
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    if (cat) params.set("category", cat);
-    router.push(`/search?${params.toString()}`);
+    if (query.trim()) params.set("q", query.trim());
+    if (category) params.set("category", category);
+    const suffix = params.toString();
+    router.push(suffix ? `/search?${suffix}` : "/search");
   };
-
-  const isHero = variant === "hero";
 
   return (
     <form
       onSubmit={onSubmit}
-      className={`bg-white rounded-[28px] sm:rounded-full p-2 sm:p-1.5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-1 shadow-[0_18px_42px_-18px_rgba(17,24,39,0.35)] border border-[#1B1B1B]/8 ${
-        isHero ? "max-w-2xl w-full" : "w-full"
+      className={`flex w-full flex-col gap-2 rounded-lg border border-border bg-card p-2 shadow-sm sm:flex-row sm:items-center ${
+        variant === "hero" ? "max-w-2xl" : ""
       }`}
     >
-      <NativeSelect
-        value={cat}
-        onChange={(e) => setCat(e.target.value)}
-        variant="search"
-        aria-label="Category"
-      >
-        <option value="">All</option>
-        {categories.map((c) => (
-          <option key={c.id} value={c.slug}>
-            {c.name}
-          </option>
-        ))}
-      </NativeSelect>
-      <span className="hidden sm:block w-px h-6 bg-[#1B1B1B]/15" />
+      {showCategory && (
+        <NativeSelect
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
+          variant="search"
+          aria-label="Category"
+        >
+          <option value="">All categories</option>
+          {categories.map((item) => (
+            <option key={item.id} value={item.slug}>
+              {item.name}
+            </option>
+          ))}
+        </NativeSelect>
+      )}
       <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search themes, plugins, kits…"
-        className="w-full min-w-0 flex-1 bg-[#F8FBFF] sm:bg-transparent h-12 px-4 sm:px-3 rounded-full text-[#1B1B1B] placeholder:text-[#1B1B1B]/45 font-semibold text-[15px]"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        placeholder="Search products..."
+        className="h-11 min-w-0 flex-1 rounded-md border border-border bg-card px-3 text-sm font-semibold text-foreground placeholder:text-muted-foreground/80 focus:border-ring focus:outline-none"
         aria-label="Search products"
       />
       <button
         type="submit"
-        className="btn-pill bg-[#1B1B1B] text-[#1E5FAF] h-11 px-5 text-sm w-full sm:w-auto"
+        className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90"
       >
-        <Search size={15} strokeWidth={2.6} />
+        <Search size={16} />
         Search
       </button>
     </form>

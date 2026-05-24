@@ -86,7 +86,7 @@ export default function LoginPage() {
             />
           </div>
           {error ? (
-            <p className="text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg p-3">{error}</p>
+            <p className="form-error">{error}</p>
           ) : null}
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? "Signing in..." : "Login"}

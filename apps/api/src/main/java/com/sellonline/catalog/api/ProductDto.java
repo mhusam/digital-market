@@ -13,6 +13,8 @@ public record ProductDto(
         BigDecimal price,
         String currency,
         String status,
+        String offeringType,
+        List<String> techTags,
         List<AssetDto> assets,
         Instant createdAt,
         Instant updatedAt

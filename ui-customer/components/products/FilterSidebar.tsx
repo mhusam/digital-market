@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
+import { Search, Tag, X } from "lucide-react";
 import type { Category } from "@digital-market/shared-types";
-import { NativeSelect } from "../ui/NativeSelect";
+import { NativeSelect } from "../ui/native-select";
 
 export interface FilterValues {
+  query?: string;
   categorySlug?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -21,7 +21,7 @@ export interface TagOption {
 interface FilterSidebarProps {
   categories: Category[];
   values: FilterValues;
-  onChange: (v: FilterValues) => void;
+  onChange: (value: FilterValues) => void;
   tagOptions?: TagOption[];
 }
 
@@ -39,10 +39,9 @@ export function FilterSidebar({
   onChange,
   tagOptions = [],
 }: FilterSidebarProps) {
-  const [open, setOpen] = useState(false);
-
   const reset = () =>
     onChange({
+      query: undefined,
       categorySlug: undefined,
       minPrice: undefined,
       maxPrice: undefined,
@@ -50,182 +49,146 @@ export function FilterSidebar({
       licenseType: undefined,
     });
 
+  const hasAnyFilter = Boolean(
+    values.query ||
+      values.categorySlug ||
+      values.licenseType ||
+      values.minPrice !== undefined ||
+      values.maxPrice !== undefined ||
+      values.tags.length > 0,
+  );
+
   return (
-    <>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="btn-pill mb-4 h-11 border border-[#0F172A]/10 bg-[#0F172A] px-5 text-sm text-white shadow-[0_16px_32px_-22px_rgba(15,23,42,0.9)] hover:bg-[#1E40AF] lg:!hidden"
-        type="button"
-        aria-expanded={open}
-      >
-        <SlidersHorizontal size={14} strokeWidth={2.6} />
-        Filters
-        <span className="ml-1 inline-flex size-6 items-center justify-center rounded-full bg-white/15">
-          <ChevronDown
-            size={14}
-            strokeWidth={2.8}
-            className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-          />
-        </span>
-      </button>
-
-      <aside
-        className={`bg-white rounded-3xl border border-[#1B1B1B]/8 shadow-[0_8px_28px_-12px_rgba(17,24,39,0.18)] lg:h-screen lg:max-h-screen lg:rounded-none lg:border-y-0 lg:border-l-0 lg:overflow-y-auto lg:overscroll-contain lg:shadow-[18px_0_42px_-34px_rgba(15,23,42,0.45)] ${
-          open ? "block" : "hidden lg:block"
-        }`}
-      >
-        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-3xl border-b border-[#1B1B1B]/8 bg-white/95 px-6 py-5 backdrop-blur-md lg:rounded-none">
-          <h3 className="font-black text-lg tracking-[-0.02em]">Filters</h3>
-          <button
-            onClick={reset}
-            className="text-[12px] font-bold text-[#0EA5E9] hover:underline underline-offset-4"
-          >
-            Reset
-          </button>
-        </div>
-
-        <div className="p-6">
-          <Section title="Category">
-            <div className="space-y-1.5">
-              <RadioRow
-                label="All categories"
-                checked={!values.categorySlug}
-                onChange={() => onChange({ ...values, categorySlug: undefined })}
-              />
-              {categories.map((c) => (
-                <RadioRow
-                  key={c.id}
-                  label={`${c.name}`}
-                  meta={c.productCount}
-                  checked={values.categorySlug === c.slug}
-                  onChange={() => onChange({ ...values, categorySlug: c.slug })}
-                />
-              ))}
-            </div>
-          </Section>
-
-          <Section title="Price">
-            <div className="grid grid-cols-2 gap-2">
-              <NumberInput
-                placeholder="Min $"
-                value={values.minPrice}
-                onChange={(v) => onChange({ ...values, minPrice: v })}
-              />
-              <NumberInput
-                placeholder="Max $"
-                value={values.maxPrice}
-                onChange={(v) => onChange({ ...values, maxPrice: v })}
-              />
-            </div>
-          </Section>
-
-          <Section title="License">
-            <NativeSelect
-              value={values.licenseType ?? ""}
-              onChange={(e) =>
+    <aside className="rounded-lg border border-border bg-card p-3 shadow-sm">
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-[minmax(280px,1.35fr)_minmax(170px,0.9fr)_minmax(220px,1fr)_minmax(170px,0.9fr)_auto] lg:items-end">
+        <div className="order-1 col-span-2 space-y-1.5 lg:order-none lg:col-span-1">
+          <label className="text-xs font-bold text-muted-foreground">Search</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-primary" />
+            <input
+              type="text"
+              placeholder="Search products"
+              value={values.query ?? ""}
+              onChange={(event) =>
                 onChange({
                   ...values,
-                  licenseType: e.target.value || undefined,
+                  query: event.target.value || undefined,
                 })
               }
-              variant="soft"
-              aria-label="License"
-            >
-              {LICENSES.map((l) => (
-                <option key={l.value} value={l.value}>
-                  {l.label}
-                </option>
-              ))}
-            </NativeSelect>
-          </Section>
-
-          {tagOptions.length > 0 && (
-            <Section title="Tags" last>
-              <div className="flex flex-wrap gap-1.5">
-                {tagOptions.slice(0, 12).map((tag) => {
-                  const active = values.tags.includes(tag.value);
-                  return (
-                    <button
-                      key={tag.value}
-                      onClick={() =>
-                        onChange({
-                          ...values,
-                          tags: active
-                            ? values.tags.filter((x) => x !== tag.value)
-                            : [...values.tags, tag.value],
-                        })
-                      }
-                      className={`px-3 h-8 rounded-full text-[12px] font-bold transition-colors ${
-                        active
-                          ? "bg-[#1B1B1B] text-[#1E5FAF]"
-                          : "bg-[#EFF6FF] text-[#1B1B1B] hover:bg-[#EAF3FF]"
-                      }`}
-                    >
-                      {tag.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </Section>
-          )}
+              className="h-10 w-full rounded-md border border-input bg-background pl-11 pr-3 text-sm font-semibold text-foreground shadow-inner shadow-primary/5 outline-none transition-colors placeholder:font-medium placeholder:text-muted-foreground focus:border-primary focus:bg-card focus:ring-3 focus:ring-primary/15"
+              aria-label="Search products"
+            />
+          </div>
         </div>
-      </aside>
-    </>
-  );
-}
 
-function Section({
-  title,
-  children,
-  last = false,
-}: {
-  title: string;
-  children: React.ReactNode;
-  last?: boolean;
-}) {
-  return (
-    <div className={last ? "" : "pb-5 mb-5 border-b border-[#1B1B1B]/10"}>
-      <h4 className="text-[11px] font-black uppercase tracking-[0.16em] text-[#1B1B1B]/70 mb-3">
-        {title}
-      </h4>
-      {children}
-    </div>
-  );
-}
+        <div className="order-2 space-y-1.5 lg:order-none">
+          <label className="text-xs font-bold text-muted-foreground">Category</label>
+          <NativeSelect
+            value={values.categorySlug ?? ""}
+            onChange={(event) =>
+              onChange({
+                ...values,
+                categorySlug: event.target.value || undefined,
+              })
+            }
+            variant="soft"
+            className="h-10 rounded-md bg-background text-sm font-semibold"
+            aria-label="Category"
+          >
+            <option value="">All categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.slug}>
+                {category.name}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
 
-function RadioRow({
-  label,
-  meta,
-  checked,
-  onChange,
-}: {
-  label: string;
-  meta?: number;
-  checked: boolean;
-  onChange: () => void;
-}) {
-  return (
-    <label className="flex items-center justify-between gap-3 cursor-pointer py-1.5 group">
-      <span className="flex items-center gap-2.5">
-        <span
-          className={`w-4 h-4 rounded-full border-2 inline-flex items-center justify-center transition-colors ${
-            checked ? "border-[#1B1B1B] bg-[#1B1B1B]" : "border-[#1B1B1B]/30"
-          }`}
+        <div className="order-4 col-span-2 space-y-1.5 lg:order-none lg:col-span-1">
+          <label className="text-xs font-bold text-muted-foreground">Price</label>
+          <div className="grid grid-cols-2 gap-2">
+            <NumberInput
+              placeholder="Min"
+              value={values.minPrice}
+              onChange={(value) => onChange({ ...values, minPrice: value })}
+            />
+            <NumberInput
+              placeholder="Max"
+              value={values.maxPrice}
+              onChange={(value) => onChange({ ...values, maxPrice: value })}
+            />
+          </div>
+        </div>
+
+        <div className="order-3 space-y-1.5 lg:order-none">
+          <label className="text-xs font-bold text-muted-foreground">License</label>
+          <NativeSelect
+            value={values.licenseType ?? ""}
+            onChange={(event) =>
+              onChange({
+                ...values,
+                licenseType: event.target.value || undefined,
+              })
+            }
+            variant="soft"
+            className="h-10 rounded-md bg-background text-sm font-semibold"
+            aria-label="License"
+          >
+            {LICENSES.map((license) => (
+              <option key={license.value} value={license.value}>
+                {license.label}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+
+        <button
+          type="button"
+          onClick={reset}
+          disabled={!hasAnyFilter}
+          className="order-5 col-span-2 inline-flex h-10 items-center justify-center gap-1 self-end rounded-md border border-border bg-background px-3 text-xs font-bold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:text-muted-foreground lg:order-none lg:col-span-1"
+          aria-label="Clear all filters"
         >
-          {checked && <span className="w-1.5 h-1.5 rounded-full bg-[#1E5FAF]" />}
-        </span>
-        <span className="text-sm font-bold">{label}</span>
-        <input
-          type="radio"
-          checked={checked}
-          onChange={onChange}
-          className="sr-only"
-        />
-      </span>
-      {meta !== undefined && (
-        <span className="text-[11px] font-bold text-[#1B1B1B]/50">{meta}</span>
+          <X size={14} />
+          Clear
+        </button>
+      </div>
+
+      {tagOptions.length > 0 && (
+        <div className="mt-2 flex items-center gap-2 border-t border-border pt-2">
+          <div className="flex shrink-0 items-center gap-1 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
+            <Tag size={14} />
+            Tags
+          </div>
+          <div className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-1">
+            {tagOptions.slice(0, 12).map((tag) => {
+              const active = values.tags.includes(tag.value);
+              return (
+                <button
+                  type="button"
+                  key={tag.value}
+                  onClick={() =>
+                    onChange({
+                      ...values,
+                      tags: active
+                        ? values.tags.filter((value) => value !== tag.value)
+                        : [...values.tags, tag.value],
+                    })
+                  }
+                  className={`h-7 shrink-0 rounded-md border px-2 text-xs font-bold transition-colors ${
+                    active
+                      ? "border-primary bg-accent text-primary"
+                      : "border-border bg-card text-muted-foreground hover:bg-muted/40"
+                  }`}
+                >
+                  {tag.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
-    </label>
+    </aside>
   );
 }
 
@@ -236,7 +199,7 @@ function NumberInput({
 }: {
   placeholder: string;
   value?: number;
-  onChange: (v: number | undefined) => void;
+  onChange: (value: number | undefined) => void;
 }) {
   return (
     <input
@@ -244,10 +207,14 @@ function NumberInput({
       min={0}
       placeholder={placeholder}
       value={value ?? ""}
-      onChange={(e) =>
-        onChange(e.target.value === "" ? undefined : Number(e.target.value))
+      onChange={(event) =>
+        onChange(
+          event.target.value === ""
+            ? undefined
+            : Math.max(0, Number(event.target.value)),
+        )
       }
-      className="h-11 px-3 rounded-2xl bg-[#EFF6FF] text-[#1B1B1B] font-bold text-sm border-2 border-transparent focus:border-[#1B1B1B] placeholder:text-[#1B1B1B]/40"
+      className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm font-semibold text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-3 focus:ring-primary/15"
     />
   );
 }

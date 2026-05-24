@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 interface EmptyStateProps {
   icon?: ReactNode;
@@ -11,11 +11,11 @@ interface EmptyStateProps {
 }
 
 const illoMap = {
-  search: "🔍",
-  cart: "🛒",
-  orders: "📦",
-  downloads: "⬇",
-  default: "✦",
+  search: "Search",
+  cart: "Cart",
+  orders: "Orders",
+  downloads: "Files",
+  default: "Empty",
 };
 
 export function EmptyState({
@@ -27,28 +27,20 @@ export function EmptyState({
   illustration = "default",
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center text-center py-20 px-6">
-      <div className="relative mb-6">
-        <div className="w-24 h-24 rounded-3xl bg-[#EAF3FF] border-2 border-[#1B1B1B]/15 flex items-center justify-center text-5xl shadow-[6px_6px_0_0_#1B1B1B]">
-          {icon ?? <span aria-hidden>{illoMap[illustration]}</span>}
-        </div>
-        <span className="absolute -top-3 -right-3 font-hand text-2xl text-[#0EA5E9] -rotate-6">
-          oh!
-        </span>
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card px-6 py-14 text-center">
+      <div className="mb-4 flex size-16 items-center justify-center rounded-lg bg-accent text-sm font-extrabold text-primary">
+        {icon ?? <span aria-hidden>{illoMap[illustration]}</span>}
       </div>
-      <h3 className="text-2xl md:text-3xl font-black tracking-[-0.03em] mb-2">
-        {title}
-      </h3>
+      <h2 className="text-2xl font-extrabold text-foreground">{title}</h2>
       {description && (
-        <p className="text-[#1B1B1B]/75 max-w-md font-semibold">{description}</p>
+        <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">{description}</p>
       )}
       {ctaHref && ctaLabel && (
         <Link
           href={ctaHref}
-          className="btn-pill bg-[#1B1B1B] text-[#1E5FAF] h-12 px-6 text-sm mt-6"
+          className="mt-6 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90"
         >
           {ctaLabel}
-          <span aria-hidden>→</span>
         </Link>
       )}
     </div>

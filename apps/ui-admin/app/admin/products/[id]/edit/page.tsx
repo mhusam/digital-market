@@ -29,6 +29,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       description: v.description || undefined,
       price: v.price,
       currency: v.currency,
+      offeringType: v.offeringType,
+      techTags: v.techTags,
     });
 
     if (res.success) {

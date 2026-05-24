@@ -1,7 +1,7 @@
 import type { Product } from "@digital-market/shared-types";
+import { EmptyState } from "../ui/app-empty-state";
+import { ProductGridSkeleton } from "../ui/product-skeletons";
 import { ProductCard } from "./ProductCard";
-import { ProductGridSkeleton } from "../ui/LoadingSkeleton";
-import { EmptyState } from "../ui/EmptyState";
 
 interface ProductGridProps {
   products: Product[];
@@ -16,7 +16,7 @@ export function ProductGrid({
   emptyTitle = "No products found",
   emptyDescription = "Try adjusting filters or browse another category.",
 }: ProductGridProps) {
-  if (loading) return <ProductGridSkeleton count={6} />;
+  if (loading) return <ProductGridSkeleton count={12} />;
   if (products.length === 0) {
     return (
       <EmptyState
@@ -29,9 +29,9 @@ export function ProductGrid({
     );
   }
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((p) => (
-        <ProductCard key={p.id} product={p} />
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
       ))}
     </div>
   );

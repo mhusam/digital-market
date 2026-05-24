@@ -16,6 +16,8 @@ export default function CreateProductPage() {
       description: v.description || undefined,
       price: v.price,
       currency: v.currency,
+      offeringType: v.offeringType,
+      techTags: v.techTags,
     });
 
     if (res.success && res.data) {

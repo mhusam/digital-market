@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { CustomerProvider, useCustomer } from "./customer-provider";
+import { ToastProvider } from "./toast-provider";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -23,14 +25,41 @@ function LogoMark() {
 }
 
 function getActiveHref(pathname: string) {
-  if (pathname === "/") {
-    return "/";
-  }
-
+  if (pathname === "/") return "/";
   return "/catalog";
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+function UtilityActions() {
+  const { cartCount, user, clearSession } = useCustomer();
+
+  return (
+    <div className="utility-actions" aria-label="Account actions">
+      <Link
+        href="/cart"
+        className="utility-link utility-text cart-link"
+        aria-label={cartCount > 0 ? `Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}` : "Cart"}
+      >
+        Cart
+        {cartCount > 0 && (
+          <span className="cart-badge" aria-hidden="true">
+            {cartCount}
+          </span>
+        )}
+      </Link>
+      {user ? (
+        <button type="button" className="utility-link utility-text" onClick={clearSession}>
+          Logout
+        </button>
+      ) : (
+        <Link href="/login" className="utility-link utility-text">
+          Login
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function Shell({ children }: { children: ReactNode }) {
   const pathname = usePathname() || "/";
   const isHome = pathname === "/";
   const activeHref = getActiveHref(pathname);
@@ -38,16 +67,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <main
       className={`landing-shell ${isHome ? "intro-screen" : "page-screen"}`}
-      aria-label="DevMarket customer marketplace"
+      aria-label="PROGMAN customer marketplace"
     >
       <div className="ambient-grid" aria-hidden="true" />
       <div className="soft-orb soft-orb-one" aria-hidden="true" />
       <div className="soft-orb soft-orb-two" aria-hidden="true" />
 
       <header className="topbar" aria-label="Primary navigation">
-        <Link href="/" className="brand" aria-label="DevMarket home">
+        <Link href="/" className="brand" aria-label="PROGMAN home">
           <LogoMark />
-          <span>DevMarket</span>
+          <span>PROGMAN</span>
         </Link>
 
         <nav className="topnav" aria-label="Marketplace links">
@@ -62,16 +91,22 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
 
-        <div className="utility-actions" aria-label="Account actions">
-          <Link href="/login" className="utility-link utility-text">
-            Login
-          </Link>
-        </div>
+        <UtilityActions />
       </header>
 
       <div key={pathname} className="route-content-slot">
         {children}
       </div>
     </main>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <CustomerProvider>
+      <ToastProvider>
+        <Shell>{children}</Shell>
+      </ToastProvider>
+    </CustomerProvider>
   );
 }

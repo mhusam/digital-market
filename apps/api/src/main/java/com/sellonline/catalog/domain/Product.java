@@ -44,6 +44,15 @@ public class Product {
     @Builder.Default
     private ProductStatus status = ProductStatus.DRAFT;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private OfferingType offeringType = OfferingType.PRODUCT;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    @Builder.Default
+    private String techTagsCsv = "";
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ProductAsset> assets = new ArrayList<>();

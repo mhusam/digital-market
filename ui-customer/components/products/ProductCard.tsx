@@ -1,113 +1,132 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Eye } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { ArrowUpRight, ShoppingCart } from "lucide-react";
 import type { Product } from "@digital-market/shared-types";
-import { ProductCover } from "./ProductCover";
-import { StarRating } from "../ui/StarRating";
-import { Badge } from "../ui/Badge";
+import { formatCompact, formatPrice } from "../../lib/cover";
 import { useCartStore } from "../../store/cartStore";
 import { toast } from "../../store/toastStore";
-import { formatPrice, formatCompact } from "../../lib/cover";
+import { Button } from "../ui/button";
+import { StarRating } from "../ui/StarRating";
+import { ProductCover } from "./ProductCover";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const reduceMotion = useReducedMotion();
-  const addItem = useCartStore((s) => s.addItem);
-  const onAdd = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const ok = addItem(product);
-    if (ok) toast.success("Added to cart", product.title);
+  const addItem = useCartStore((state) => state.addItem);
+  const hasSale =
+    typeof product.salePrice === "number" && product.salePrice < product.price;
+  const rating = product.rating ?? 0;
+  const reviewCount = product.reviewCount ?? 0;
+  const salesCount = product.salesCount ?? 0;
+
+  const onAdd = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const added = addItem(product);
+    if (added) toast.success("Added to cart", product.title);
     else toast.info("Already in cart", product.title);
   };
 
-  const hasSale =
-    typeof product.salePrice === "number" && product.salePrice < product.price;
-
   return (
-    <motion.article
-      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-      whileHover={reduceMotion ? undefined : { y: -5 }}
-      viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-      className="group flex flex-col overflow-hidden rounded-3xl border border-[#1B1B1B]/5 bg-white shadow-[0_8px_28px_-12px_rgba(17,24,39,0.18)] transition-shadow hover:shadow-[0_24px_54px_-22px_rgba(17,24,39,0.3)]"
-    >
-      <Link href={`/products/${product.slug}`} className="block relative">
-        <ProductCover seed={product.id} title={product.title} rounded="rounded-none" />
+    <article className="surface-edge group relative flex h-full flex-col overflow-hidden rounded-2xl">
+      {/* Cover */}
+      <Link
+        href={`/products/${product.slug}`}
+        className="relative block overflow-hidden"
+      >
+        <div className="overflow-hidden">
+          <div className="transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]">
+            <ProductCover
+              seed={product.id}
+              title={product.title}
+              size="card"
+              rounded="rounded-none"
+            />
+          </div>
+        </div>
+
+        {/* Featured ribbon */}
         {product.featured && (
-          <span className="absolute top-3 left-3">
-            <Badge tone="ink">★ Featured</Badge>
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-foreground/95 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-background backdrop-blur">
+            <span className="size-1.5 rounded-full bg-[var(--accent-electric)]" />
+            Featured
           </span>
         )}
+
+        {/* Sale tag */}
         {hasSale && (
-          <span className="absolute top-3 right-3">
-            <Badge tone="coral">
-              -
-              {Math.round(
-                ((product.price - (product.salePrice as number)) / product.price) *
-                  100,
-              )}
-              %
-            </Badge>
+          <span className="absolute right-3 top-3 inline-flex items-center rounded-full bg-[var(--accent-electric)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white">
+            Sale
           </span>
         )}
-        <div className="absolute inset-0 bg-[#1B1B1B]/0 group-hover:bg-[#1B1B1B]/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-          <span className="btn-pill bg-white text-[#1B1B1B] h-10 px-5 text-[13px]">
-            <Eye size={14} strokeWidth={2.6} />
-            View Details
+
+        {/* Quick view */}
+        <div className="absolute bottom-3 right-3 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <span className="inline-flex size-9 items-center justify-center rounded-full bg-background/95 text-foreground shadow-lg backdrop-blur">
+            <ArrowUpRight size={15} />
           </span>
         </div>
       </Link>
-      <div className="p-5 flex-1 flex flex-col">
-        <div className="flex items-center justify-between gap-2 mb-2">
+
+      <div className="flex flex-1 flex-col p-5">
+        {/* Category eyebrow */}
+        <div className="mb-3 flex min-h-4 items-center justify-between gap-2">
           <Link
-            href={`/categories/${product.category?.slug ?? "themes"}`}
-            className="text-[11px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60 hover:text-[#1B1B1B]"
+            href={`/categories/${product.category?.slug ?? "digital"}`}
+            className="truncate text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-[var(--accent-electric)]"
           >
             {product.category?.name ?? "Digital"}
           </Link>
-          <StarRating value={product.rating} showValue reviewCount={product.reviewCount} />
+          <StarRating value={rating} size={12} showValue reviewCount={reviewCount} />
         </div>
+
+        {/* Title */}
         <Link href={`/products/${product.slug}`}>
-          <h3 className="text-[18px] font-black tracking-[-0.02em] leading-tight mb-1 group-hover:text-[#0EA5E9] transition-colors">
+          <h3 className="line-clamp-2 min-h-[2.75rem] text-[1.0625rem] font-extrabold leading-tight tracking-[-0.02em] text-foreground transition-colors group-hover:text-[var(--accent-electric)]">
             {product.title}
           </h3>
         </Link>
-        <p className="text-[13.5px] text-[#1B1B1B]/70 font-medium line-clamp-2 mb-4">
+
+        {/* Short description */}
+        <p className="mt-2.5 line-clamp-2 min-h-10 text-[13px] leading-5 text-muted-foreground">
           {product.shortDescription}
         </p>
-        <div className="mt-auto flex items-center justify-between gap-3">
-          <div className="flex flex-col">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black tracking-[-0.03em]">
+
+        <div className="mt-4 hairline" />
+
+        {/* Price + actions */}
+        <div className="mt-4 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+              {formatCompact(salesCount)} sold
+            </p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-xl font-extrabold tracking-[-0.02em] tabular-nums text-foreground">
                 {formatPrice(product.salePrice ?? product.price)}
               </span>
               {hasSale && (
-                <span className="text-sm font-semibold text-[#1B1B1B]/45 line-through">
+                <span className="text-xs font-semibold tabular-nums text-muted-foreground line-through">
                   {formatPrice(product.price)}
                 </span>
               )}
             </div>
-            <span className="text-[11px] font-bold text-[#1B1B1B]/55 uppercase tracking-[0.1em]">
-              {formatCompact(product.salesCount)} sold
-            </span>
           </div>
-          <button
+          <Button
+            type="button"
             onClick={onAdd}
-            className="btn-pill bg-[#1B1B1B] text-[#1E5FAF] h-10 px-4 text-[13px] hover:bg-[#000]"
+            variant="default"
+            size="sm"
             aria-label={`Add ${product.title} to cart`}
+            className="rounded-full"
           >
-            <ShoppingBag size={14} strokeWidth={2.6} />
+            <ShoppingCart size={14} className="mr-1.5" />
             Add
-          </button>
+          </Button>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }

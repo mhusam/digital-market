@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import { getInvoice, getOrder } from "@digital-market/api-client";
 import type { Order } from "@digital-market/shared-types";
 import { Download, Printer } from "lucide-react";
-import { Card } from "../../../../components/ui/Card";
-import { EmptyState } from "../../../../components/ui/EmptyState";
-import { Skeleton } from "../../../../components/ui/LoadingSkeleton";
+import { Card } from "../../../../components/ui/card";
+import { EmptyState } from "../../../../components/ui/app-empty-state";
+import { Skeleton } from "../../../../components/ui/skeleton";
 import { formatDate } from "../../../../lib/account";
 import { formatPrice } from "../../../../lib/cover";
 import { toast } from "../../../../store/toastStore";
@@ -67,13 +67,13 @@ export default function AccountInvoicePage() {
     <Card className="p-6 md:p-8 print-clean">
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
             Invoice
           </p>
           <h2 className="mt-2 text-3xl font-black tracking-[-0.03em]">
             {invoice.invoiceNumber}
           </h2>
-          <p className="mt-3 text-sm font-semibold text-[#1B1B1B]/68">
+          <p className="mt-3 text-sm font-semibold text-muted-foreground">
             Issued for order {order.id} on {formatDate(order.createdAt)}.
           </p>
         </div>
@@ -81,7 +81,7 @@ export default function AccountInvoicePage() {
           <button
             type="button"
             onClick={() => window.print()}
-            className="btn-pill h-11 border-2 border-[#1B1B1B]/10 bg-white px-5 text-sm text-[#1B1B1B]"
+            className="btn-pill h-11 border-2 border-border bg-card px-5 text-sm text-foreground"
           >
             <Printer size={15} strokeWidth={2.6} />
             Print
@@ -91,7 +91,7 @@ export default function AccountInvoicePage() {
             onClick={() =>
               toast.success("Mock invoice prepared", invoice.downloadUrl)
             }
-            className="btn-pill h-11 bg-[#1B1B1B] px-5 text-sm text-[#1E5FAF]"
+            className="btn-pill h-11 bg-primary px-5 text-sm text-primary-foreground hover:bg-primary/90"
           >
             <Download size={15} strokeWidth={2.6} />
             Download PDF
@@ -100,14 +100,14 @@ export default function AccountInvoicePage() {
       </div>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2">
-        <div className="rounded-[28px] bg-[#F8FBFF] px-5 py-5">
-          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+        <div className="rounded-[28px] bg-muted/40 px-5 py-5">
+          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
             Bill to
           </p>
           <p className="mt-2 text-lg font-black tracking-[-0.02em]">
             {order.user?.displayName ?? "Customer"}
           </p>
-          <div className="mt-3 space-y-1 text-sm font-semibold text-[#1B1B1B]/68">
+          <div className="mt-3 space-y-1 text-sm font-semibold text-muted-foreground">
             <p>{order.user?.email ?? "No email on file"}</p>
             {billing && (
               <>
@@ -123,43 +123,43 @@ export default function AccountInvoicePage() {
           </div>
         </div>
 
-        <div className="rounded-[28px] bg-[#F8FBFF] border border-[#1B1B1B]/7 px-5 py-5">
-          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+        <div className="rounded-[28px] bg-muted/40 border border-border px-5 py-5">
+          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
             Summary
           </p>
-          <div className="mt-4 space-y-3 text-sm font-semibold text-[#1B1B1B]/72">
+          <div className="mt-4 space-y-3 text-sm font-semibold text-muted-foreground">
             <div className="flex items-center justify-between">
               <span>Subtotal</span>
-              <span className="font-black text-[#1B1B1B]">
-                {formatPrice(order.subtotal)}
+              <span className="font-black text-foreground">
+                {formatPrice(order.subtotal ?? 0)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span>Discount</span>
-              <span className="font-black text-[#1B1B1B]">
-                {formatPrice(order.discountAmount)}
+              <span className="font-black text-foreground">
+                {formatPrice(order.discountAmount ?? 0)}
               </span>
             </div>
-            <div className="flex items-center justify-between border-t border-[#1B1B1B]/8 pt-3 text-base">
+            <div className="flex items-center justify-between border-t border-border pt-3 text-base">
               <span>Total</span>
-              <span className="font-black text-[#1B1B1B]">
-                {formatPrice(order.total)}
+              <span className="font-black text-foreground">
+                {formatPrice(order.total ?? 0)}
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-8 rounded-[28px] border border-[#1B1B1B]/7 bg-white px-5 py-5">
-        <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+      <div className="mt-8 rounded-[28px] border border-border bg-card px-5 py-5">
+        <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
           Purchased items
         </p>
         <div className="mt-4 space-y-3">
-          {order.items.map((item) => (
+          {(order.items ?? []).map((item: NonNullable<Order["items"]>[number]) => (
             <div key={item.id} className="flex items-center justify-between gap-4">
               <div>
                 <p className="font-black">{item.product?.title ?? "Product"}</p>
-                <p className="text-sm font-semibold text-[#1B1B1B]/62">
+                <p className="text-sm font-semibold text-muted-foreground">
                   {item.licenseType} license
                 </p>
               </div>

@@ -1,6 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Card } from "../ui/Card";
+import { Card } from "../ui/card";
 
 interface AuthShellProps {
   eyebrow: string;
@@ -18,42 +19,30 @@ export function AuthShell({
   footer,
 }: AuthShellProps) {
   return (
-    <div className="max-w-[1180px] mx-auto px-5 md:px-8 pt-10 pb-20">
-      <div className="grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
-        <section className="rounded-[36px] bg-[#1B1B1B] text-white px-7 py-8 md:px-10 md:py-10 shadow-[0_32px_80px_-32px_rgba(17,24,39,0.45)]">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2.5 rounded-full bg-white/10 px-3 py-2 text-sm font-black"
-          >
-            <span
-              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#1E5FAF] text-[#1B1B1B]"
-              aria-hidden
-            >
-              ◆
-            </span>
-            Forge
+    <div className="page-container py-10 md:py-16">
+      <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[1fr_420px]">
+        <section className="rounded-lg border border-border bg-card p-6 shadow-sm md:p-8">
+          <Link href="/" className="inline-flex items-center gap-2 font-extrabold text-foreground">
+            <Image src="/logo-2.svg" alt="PROGMAN logo" width={34} height={34} className="size-8" />
+            <span className="font-brand text-[1.08rem] tracking-[0.03em]">PROGMAN</span>
           </Link>
-
-          <div className="mt-10 max-w-xl">
-            <span className="eyebrow light">{eyebrow}</span>
-            <h1 className="mt-4 text-4xl md:text-5xl font-black tracking-[-0.04em]">
-              {title}
-            </h1>
-            <p className="mt-4 text-white/72 text-[15px] leading-relaxed font-semibold">
-              {description}
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-3 md:grid-cols-2">
+          <p className="mt-10 font-hand text-2xl text-primary">{eyebrow}</p>
+          <h1 className="mt-3 max-w-xl text-4xl font-extrabold text-foreground md:text-5xl">
+            {title}
+          </h1>
+          <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">
+            {description}
+          </p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
             {[
-              "Track paid orders and receipts in one place",
-              "Re-download purchased files from a stable account area",
-              "Open support tickets without leaving the storefront",
-              "Keep billing details ready for faster mock checkout",
+              "Track orders and receipts",
+              "Download purchased files",
+              "Manage profile details",
+              "Open support tickets",
             ].map((item) => (
               <div
                 key={item}
-                className="rounded-[28px] border border-white/10 bg-white/5 px-4 py-4 text-sm font-bold text-white/88"
+                className="rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm font-bold text-foreground"
               >
                 {item}
               </div>
@@ -61,9 +50,9 @@ export function AuthShell({
           </div>
         </section>
 
-        <Card className="p-6 md:p-8 self-start">
+        <Card className="self-start p-6">
           {children}
-          <div className="mt-8 border-t border-[#1B1B1B]/8 pt-5 text-sm font-semibold text-[#1B1B1B]/72">
+          <div className="mt-6 border-t border-border pt-5 text-sm text-muted-foreground">
             {footer}
           </div>
         </Card>

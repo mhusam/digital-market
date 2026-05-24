@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { getOrders } from "@digital-market/api-client";
 import type { Order } from "@digital-market/shared-types";
 import { OrderCard } from "../../../components/account/OrderCard";
-import { Card } from "../../../components/ui/Card";
-import { EmptyState } from "../../../components/ui/EmptyState";
-import { Skeleton } from "../../../components/ui/LoadingSkeleton";
+import { Card } from "../../../components/ui/card";
+import { EmptyState } from "../../../components/ui/app-empty-state";
+import { Skeleton } from "../../../components/ui/skeleton";
 
 export default function AccountOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -32,13 +32,13 @@ export default function AccountOrdersPage() {
   return (
     <Card className="p-6 md:p-7">
       <div className="max-w-2xl">
-        <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+        <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
           Orders
         </p>
         <h2 className="mt-2 text-3xl font-black tracking-[-0.03em]">
           Review every purchase and payment outcome.
         </h2>
-        <p className="mt-3 text-sm font-semibold text-[#1B1B1B]/68">
+        <p className="mt-3 text-sm font-semibold text-muted-foreground">
           Paid, pending, refunded, and cancelled states stay visible so the
           account experience covers realistic marketplace scenarios.
         </p>

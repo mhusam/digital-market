@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Product, ProductStatus } from "@digital-market/shared-types";
+import type { OfferingType, Product, ProductStatus } from "@digital-market/shared-types";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
@@ -17,6 +17,8 @@ export interface ProductFormValues {
   price: number;
   currency: string;
   status: ProductStatus;
+  offeringType: OfferingType;
+  techTags: string[];
 }
 
 interface ProductFormProps {
@@ -37,6 +39,8 @@ export function ProductForm({ initial, onSubmit, submitLabel = "Save product" }:
     price: initial?.price ?? 0,
     currency: initial?.currency ?? "USD",
     status: initial?.status ?? "DRAFT",
+    offeringType: initial?.offeringType ?? "PRODUCT",
+    techTags: initial?.techTags ?? [],
   });
 
   const update = <K extends keyof ProductFormValues>(key: K, val: ProductFormValues[K]) =>
@@ -87,6 +91,31 @@ export function ProductForm({ initial, onSubmit, submitLabel = "Save product" }:
               onChange={(e) => update("description", e.target.value)}
               rows={6}
               className="min-h-[160px]"
+            />
+            <Select
+              label="Offering type"
+              value={values.offeringType}
+              onChange={(e) => update("offeringType", e.target.value as OfferingType)}
+              options={[
+                { value: "PRODUCT", label: "Product" },
+                { value: "PROJECT", label: "Project" },
+                { value: "SOLUTION", label: "Solution" },
+              ]}
+            />
+            <Input
+              label="Tech tags"
+              value={values.techTags.join(", ")}
+              onChange={(e) =>
+                update(
+                  "techTags",
+                  e.target.value
+                    .split(",")
+                    .map((item) => item.trim())
+                    .filter(Boolean)
+                )
+              }
+              placeholder="backend, spring-boot, java"
+              hint="Comma-separated tags used by customer storefront filters."
             />
           </div>
         </FormCard>

@@ -1,0 +1,459 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-hand: var(--font-caveat), cursive;
+  --font-brand: var(--font-brand);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+:root {
+  color-scheme: light;
+  /* Editorial light — paper warm with deep ink contrast */
+  --background: #f6f4ef;
+  --foreground: #0b0b10;
+  --card: #ffffff;
+  --card-foreground: #0b0b10;
+  --popover: #ffffff;
+  --popover-foreground: #0b0b10;
+  --primary: #1d1d23;
+  --primary-foreground: #f6f4ef;
+  --secondary: #ece8df;
+  --secondary-foreground: #1d1d23;
+  --muted: #ece8df;
+  --muted-foreground: #5a5760;
+  --accent: #f0ebe0;
+  --accent-foreground: #1d1d23;
+  --destructive: #b91c1c;
+  --border: #e3ddd0;
+  --input: #e3ddd0;
+  --ring: #1d1d23;
+  --chart-1: #1d1d23;
+  --chart-2: #b8642e;
+  --chart-3: #4a5d3a;
+  --chart-4: #5c4787;
+  --chart-5: #8a8580;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0b0b10;
+  --sidebar-primary: #1d1d23;
+  --sidebar-primary-foreground: #f6f4ef;
+  --sidebar-accent: #f0ebe0;
+  --sidebar-accent-foreground: #1d1d23;
+  --sidebar-border: #e3ddd0;
+  --sidebar-ring: #1d1d23;
+
+  /* Signature accents */
+  --accent-electric: #ff5b1f;
+  --accent-violet: #8b5cf6;
+  --accent-cyan: #06b6d4;
+  --accent-lime: #c8f23f;
+
+  /* Surfaces */
+  --surface-elevated: #ffffff;
+  --surface-sunken: #efeae0;
+  --grain-opacity: 0.045;
+  --hairline: color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+
+.dark {
+  color-scheme: dark;
+  /* Editorial dark — deep ink with warm signal */
+  --background: #0a0a0c;
+  --foreground: #f4f1e8;
+  --card: #111114;
+  --card-foreground: #f4f1e8;
+  --popover: #111114;
+  --popover-foreground: #f4f1e8;
+  --primary: #f4f1e8;
+  --primary-foreground: #0a0a0c;
+  --secondary: #1a1a1f;
+  --secondary-foreground: #f4f1e8;
+  --muted: #16161a;
+  --muted-foreground: #9a9690;
+  --accent: #1c1c22;
+  --accent-foreground: #f4f1e8;
+  --destructive: #ef4444;
+  --border: #232329;
+  --input: #232329;
+  --ring: #f4f1e8;
+  --chart-1: #f4f1e8;
+  --chart-2: #ff7a3d;
+  --chart-3: #a3d977;
+  --chart-4: #a78bfa;
+  --chart-5: #71717a;
+  --sidebar: #0d0d10;
+  --sidebar-foreground: #f4f1e8;
+  --sidebar-primary: #f4f1e8;
+  --sidebar-primary-foreground: #0a0a0c;
+  --sidebar-accent: #1c1c22;
+  --sidebar-accent-foreground: #f4f1e8;
+  --sidebar-border: #232329;
+  --sidebar-ring: #f4f1e8;
+
+  --accent-electric: #ff6b35;
+  --accent-violet: #a78bfa;
+  --accent-cyan: #22d3ee;
+  --accent-lime: #d4ff4a;
+
+  --surface-elevated: #14141a;
+  --surface-sunken: #06060a;
+  --grain-opacity: 0.08;
+  --hairline: color-mix(in oklab, var(--foreground) 14%, transparent);
+}
+
+/* Fixed gradient lives on <html> so it stays viewport-relative without
+   background-attachment:fixed, which creates a GPU compositing layer that
+   breaks View Transition snapshots. */
+html {
+  background:
+    radial-gradient(
+      900px 600px at 8% -10%,
+      color-mix(in oklab, var(--accent-electric) 8%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 500px at 110% 10%,
+      color-mix(in oklab, var(--accent-violet) 7%, transparent),
+      transparent 65%
+    ),
+    var(--background);
+}
+
+body {
+  min-height: 100vh;
+  font-weight: 450;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: transparent;
+}
+
+.font-hand {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+}
+
+.font-brand {
+  font-family: var(--font-brand), sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.page-container {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding-inline: 2rem;
+  }
+}
+
+@layer components {
+  /* Editorial eyebrow — caps, tracking, hairline rule */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.22em] text-muted-foreground;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.5rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .btn-pill {
+    @apply inline-flex items-center justify-center rounded-full border border-transparent px-5 font-semibold transition-colors;
+  }
+
+  /* Hairline divider that respects current text color */
+  .hairline {
+    height: 1px;
+    background: var(--hairline);
+    width: 100%;
+  }
+
+  /* Glass surface — soft frosted card with editorial border */
+  .surface-glass {
+    background: color-mix(in oklab, var(--card) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid var(--border);
+  }
+
+  /* Editorial card with hover lift */
+  .surface-edge {
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent),
+      0 12px 30px -18px color-mix(in oklab, var(--foreground) 25%, transparent);
+    transition:
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 200ms ease;
+  }
+
+  .surface-edge:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--foreground) 6%, transparent),
+      0 28px 48px -22px color-mix(in oklab, var(--foreground) 32%, transparent);
+    border-color: color-mix(in oklab, var(--foreground) 25%, var(--border));
+  }
+
+  /* Number tag — editorial section counter */
+  .num-tag {
+    @apply inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-current/20 px-2 font-mono text-[11px] font-bold tabular-nums;
+  }
+
+  /* Marquee track */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 38s linear infinite;
+  }
+
+  .marquee-pause:hover .marquee {
+    animation-play-state: paused;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+
+  /* Keep grain-bg children above the ::before grain overlay.
+     Placed in @layer base so Tailwind utility classes (sticky, fixed, etc.)
+     from @layer utilities can still override position when needed. */
+  .grain-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* Grain texture overlay (subtle film noise) */
+.grain-bg {
+  position: relative;
+}
+
+.grain-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* Mesh gradient backdrop */
+.mesh-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 18% 22%,
+      color-mix(in oklab, var(--accent-electric) 35%, transparent) 0%,
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 82% 18%,
+      color-mix(in oklab, var(--accent-violet) 28%, transparent) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 55% 90%,
+      color-mix(in oklab, var(--accent-cyan) 22%, transparent) 0%,
+      transparent 45%
+    );
+  filter: blur(60px);
+  opacity: 0.55;
+}
+
+.dark .mesh-bg {
+  opacity: 0.4;
+}
+
+/* Brand logo text shimmer animation */
+.brand-shimmer {
+  display: inline-block;
+  color: transparent !important;
+  background: linear-gradient(
+    110deg,
+    var(--foreground) 0%,
+    var(--foreground) 34%,
+    color-mix(in oklab, var(--accent-electric) 80%, white) 46%,
+    var(--accent-electric) 50%,
+    color-mix(in oklab, var(--accent-violet) 70%, white) 54%,
+    var(--foreground) 66%,
+    var(--foreground) 100%
+  );
+  background-size: 260% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: text-shimmer 4.2s ease-in-out infinite;
+}
+
+/* Underline accent — animated brushstroke */
+.brush-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.brush-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.05em;
+  height: 0.35em;
+  background: var(--accent-electric);
+  z-index: -1;
+  transform: skewX(-8deg) scaleX(0.96);
+  opacity: 0.85;
+}
+
+@keyframes text-shimmer {
+  from {
+    background-position: 180% 50%;
+  }
+  to {
+    background-position: -80% 50%;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.float-slow {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent-electric) 50%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.pulse-dot {
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-shimmer {
+    animation: none;
+    background-position: 50% 50%;
+  }
+  .marquee,
+  .float-slow,
+  .pulse-dot,
+  .fade-up {
+    animation: none;
+  }
+}
+
+/* Suppress the browser's default cross-fade so the JS clip-path animation
+   is the only animation playing. Matches the exact CSS MagicUI ships. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Pin the new state to the collapsed clip-path until ready.then() fires,
+   preventing Firefox from briefly showing the full new theme unclipped. */
+html[data-magicui-theme-vt="active"] ::view-transition-new(root) {
+  clip-path: var(--magicui-theme-vt-clip-from);
+}
+
+/* Freeze icon CSS transitions during the view transition so the snapshot
+   captures the final icon state instantly (not a mid-transition frame). */
+html[data-magicui-theme-vt="active"] .theme-toggle-icon {
+  transition: none !important;
+}

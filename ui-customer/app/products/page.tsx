@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { getCategories, getProducts, searchProducts } from "@digital-market/api-client";
+import type { Category, Product, ProductFilters } from "@digital-market/shared-types";
 import {
-  getCategories,
-  getProducts,
-} from "@digital-market/api-client";
-import type {
-  Category,
-  Product,
-  ProductFilters,
-} from "@digital-market/shared-types";
-import { FilterSidebar, type FilterValues, type TagOption } from "../../components/products/FilterSidebar";
+  FilterSidebar,
+  type FilterValues,
+  type TagOption,
+} from "../../components/products/FilterSidebar";
 import { ProductGrid } from "../../components/products/ProductGrid";
-import { Pagination } from "../../components/ui/Pagination";
-import { Breadcrumb } from "../../components/ui/Breadcrumb";
-import { NativeSelect } from "../../components/ui/NativeSelect";
+import { Breadcrumb } from "../../components/ui/route-breadcrumb";
+import { NativeSelect } from "../../components/ui/native-select";
+import { Pagination } from "../../components/ui/app-pagination";
+
+const PAGE_SIZE = 12;
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest" },
@@ -24,7 +23,32 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Top rated" },
 ] as const;
 
-type SortBy = typeof SORT_OPTIONS[number]["value"];
+type SortBy = (typeof SORT_OPTIONS)[number]["value"];
+
+function sortProducts(products: Product[], sortBy: SortBy): Product[] {
+  const sorted = [...products];
+  switch (sortBy) {
+    case "newest":
+      sorted.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+      break;
+    case "popular":
+      sorted.sort((a, b) => (b.salesCount ?? 0) - (a.salesCount ?? 0));
+      break;
+    case "price_asc":
+      sorted.sort((a, b) => (a.salePrice ?? a.price) - (b.salePrice ?? b.price));
+      break;
+    case "price_desc":
+      sorted.sort((a, b) => (b.salePrice ?? b.price) - (a.salePrice ?? a.price));
+      break;
+    case "rating":
+      sorted.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+      break;
+  }
+  return sorted;
+}
 
 export default function ProductsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -34,12 +58,12 @@ export default function ProductsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [sortBy, setSortBy] = useState<SortBy>("popular");
-  const [filters, setFilters] = useState<FilterValues>({ tags: [] });
+  const [filters, setFilters] = useState<FilterValues>({ query: "", tags: [] });
 
   useEffect(() => {
     let active = true;
-    void getCategories().then((r) => {
-      if (active) setCategories(r.data ?? []);
+    void getCategories().then((response) => {
+      if (active) setCategories(response.data ?? []);
     });
     return () => {
       active = false;
@@ -48,23 +72,40 @@ export default function ProductsPage() {
 
   useEffect(() => {
     let mounted = true;
-    const f: ProductFilters = {
+    const requestFilters: ProductFilters = {
       sortBy,
       page,
-      limit: 9,
+      limit: PAGE_SIZE,
       categorySlug: filters.categorySlug,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
       tags: filters.tags.length > 0 ? filters.tags : undefined,
       licenseType: filters.licenseType as ProductFilters["licenseType"],
     };
-    void getProducts(f).then((r) => {
+    const trimmedQuery = filters.query?.trim();
+
+    const loadProducts = async () => {
+      setLoading(true);
+      const response = trimmedQuery
+        ? await searchProducts(trimmedQuery, {
+            page,
+            limit: PAGE_SIZE,
+            categorySlug: filters.categorySlug,
+            minPrice: filters.minPrice,
+            maxPrice: filters.maxPrice,
+            tags: filters.tags.length > 0 ? filters.tags : undefined,
+            licenseType: filters.licenseType as ProductFilters["licenseType"],
+          })
+        : await getProducts(requestFilters);
       if (!mounted) return;
-      setProducts(r.data ?? []);
-      setTotalPages(r.meta?.totalPages ?? 1);
-      setTotal(r.meta?.total ?? 0);
+      setProducts(sortProducts(response.data ?? [], sortBy));
+      setTotalPages(response.meta?.totalPages ?? 1);
+      setTotal(response.meta?.total ?? 0);
       setLoading(false);
-    });
+    };
+
+    void loadProducts();
+
     return () => {
       mounted = false;
     };
@@ -87,66 +128,69 @@ export default function ProductsPage() {
   );
 
   return (
-    <div className="mx-auto max-w-[1280px] px-5 pt-8 pb-20 md:px-8 md:pt-12 lg:max-w-none lg:pl-[312px] xl:pl-[352px]">
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
-      <div className="mt-6 mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <span className="eyebrow">Shop</span>
-          <h1 className="mt-3 text-4xl md:text-5xl font-black tracking-[-0.04em]">
-            All products{" "}
-            <span className="font-hand text-[#0EA5E9] text-3xl ml-2">
-              {total} found
-            </span>
-          </h1>
+    <div className="page-container py-4">
+      <div className="grid gap-3 border-b border-border pb-3 md:grid-cols-[1fr_auto] md:items-end">
+        <div className="min-w-0">
+          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
+          <div className="mt-2 flex flex-wrap items-end gap-x-3 gap-y-1">
+            <h1 className="text-2xl font-extrabold text-foreground md:text-3xl">
+              Products
+            </h1>
+            <p className="pb-1 text-sm font-semibold text-muted-foreground">
+              {loading ? "Loading..." : `${total} products`}
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-[#1B1B1B]/8 bg-white p-1.5 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.55)] transition-shadow hover:shadow-[0_18px_40px_-28px_rgba(15,23,42,0.65)]">
-          <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60 pl-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
             Sort
           </span>
           <NativeSelect
             value={sortBy}
-            onChange={(e) => {
-              setLoading(true);
-              setSortBy(e.target.value as SortBy);
+            onChange={(event) => {
+              setSortBy(event.target.value as SortBy);
               setPage(1);
             }}
             variant="pill"
             aria-label="Sort products"
           >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </NativeSelect>
         </div>
       </div>
 
-      <div className="lg:fixed lg:bottom-0 lg:left-[78px] lg:top-0 lg:z-40 lg:w-[280px] xl:w-[320px]">
+      <div className="mt-3 space-y-3">
         <FilterSidebar
           categories={categories}
           values={filters}
-          onChange={(v) => {
-            setLoading(true);
-            setFilters(v);
+          onChange={(nextFilters) => {
+            setFilters(nextFilters);
             setPage(1);
           }}
           tagOptions={tagOptions}
         />
-      </div>
 
-      <div className="min-w-0">
-        <ProductGrid products={products} loading={loading} />
-        {!loading && totalPages > 1 && (
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onChange={(nextPage) => {
-              setLoading(true);
-              setPage(nextPage);
-            }}
-          />
-        )}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
+            {loading
+              ? "Updating results"
+              : `Showing ${products.length} of ${total}`}
+          </p>
+          <p className="text-xs font-bold text-muted-foreground">
+            Page {page} of {Math.max(totalPages, 1)}
+          </p>
+        </div>
+
+        <div className="min-w-0 space-y-4">
+          <ProductGrid products={products} loading={loading} />
+          {!loading && totalPages > 1 && (
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+          )}
+        </div>
       </div>
     </div>
   );

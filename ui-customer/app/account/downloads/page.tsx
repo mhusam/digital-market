@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { getDownloads, mockProducts } from "@digital-market/api-client";
 import type { Download } from "@digital-market/shared-types";
 import { DownloadCard } from "../../../components/account/DownloadCard";
-import { Card } from "../../../components/ui/Card";
-import { EmptyState } from "../../../components/ui/EmptyState";
-import { Skeleton } from "../../../components/ui/LoadingSkeleton";
+import { Card } from "../../../components/ui/card";
+import { EmptyState } from "../../../components/ui/app-empty-state";
+import { Skeleton } from "../../../components/ui/skeleton";
 
 export default function AccountDownloadsPage() {
   const [downloads, setDownloads] = useState<Download[]>([]);
@@ -32,13 +32,13 @@ export default function AccountDownloadsPage() {
   return (
     <Card className="p-6 md:p-7">
       <div className="max-w-2xl">
-        <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+        <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
           Downloads
         </p>
         <h2 className="mt-2 text-3xl font-black tracking-[-0.03em]">
           Reclaim the files tied to your paid orders.
         </h2>
-        <p className="mt-3 text-sm font-semibold text-[#1B1B1B]/68">
+        <p className="mt-3 text-sm font-semibold text-muted-foreground">
           Paid purchases unlock downloads. Download limits and support nudges are
           surfaced here so the customer flow mirrors the product rules in
           `docs.md`.
@@ -55,10 +55,7 @@ export default function AccountDownloadsPage() {
             <DownloadCard
               key={download.id}
               download={download}
-              product={
-                download.product ??
-                mockProducts.find((product) => product.id === download.productId)
-              }
+              product={mockProducts.find((product) => product.id === download.productId)}
             />
           ))
         ) : (

@@ -5,6 +5,7 @@ import type {
   Coupon,
   DashboardStats,
   DownloadEvent,
+  OfferingType,
   Order,
   Payment,
   Product,
@@ -115,8 +116,11 @@ export async function adminLogout(): Promise<ApiResponse<void>> {
   return { success: true };
 }
 
+<<<<<<< Updated upstream
 // ─── Auth (customer / storefront) ────────────────────────────────────────────
 
+=======
+>>>>>>> Stashed changes
 export async function customerRegister(params: {
   email: string;
   password: string;
@@ -273,6 +277,8 @@ export async function adminCreateProduct(d: {
   description?: string;
   price: number;
   currency?: string;
+  offeringType?: OfferingType;
+  techTags?: string[];
 }): Promise<ApiResponse<Product>> {
   try {
     const { data } = await getHttp().post<Product>("/api/v1/admin/products", d);
@@ -284,7 +290,14 @@ export async function adminCreateProduct(d: {
 
 export async function adminUpdateProduct(
   id: string,
-  d: { title?: string; description?: string; price?: number; currency?: string }
+  d: {
+    title?: string;
+    description?: string;
+    price?: number;
+    currency?: string;
+    offeringType?: OfferingType;
+    techTags?: string[];
+  }
 ): Promise<ApiResponse<Product>> {
   try {
     const { data } = await getHttp().put<Product>(`/api/v1/admin/products/${id}`, d);
@@ -368,7 +381,11 @@ export async function adminDeleteAsset(assetId: string): Promise<ApiResponse<voi
 
 export interface StoreProductFilters {
   search?: string;
+<<<<<<< Updated upstream
   type?: string;
+=======
+  type?: OfferingType | "";
+>>>>>>> Stashed changes
   tags?: string[];
   priceMin?: number;
   priceMax?: number;

@@ -86,7 +86,7 @@ export const register = async (
     firstName: data.firstName,
     lastName: data.lastName,
     displayName: `${data.firstName} ${data.lastName}`,
-    role: 'customer',
+    role: 'CUSTOMER',
     status: 'active',
     emailVerified: false,
     createdAt: new Date().toISOString(),
@@ -270,7 +270,7 @@ export const addCartItem = async (
   const updatedCart: Cart = {
     ...sessionCart,
     items: [...sessionCart.items, newItem],
-    subtotal: sessionCart.subtotal + newItem.price,
+    subtotal: (sessionCart.subtotal ?? 0) + (newItem.price ?? 0),
     updatedAt: new Date().toISOString(),
   };
 
@@ -294,7 +294,7 @@ export const removeCartItem = async (
   const updatedCart: Cart = {
     ...sessionCart,
     items: sessionCart.items.filter((i) => i.id !== itemId),
-    subtotal: Math.max(0, sessionCart.subtotal - item.price),
+    subtotal: Math.max(0, (sessionCart.subtotal ?? 0) - (item.price ?? 0)),
     updatedAt: new Date().toISOString(),
   };
 
@@ -340,7 +340,7 @@ export const validateCoupon = async (
     };
   }
 
-  if (coupon.usageLimit && coupon.usageCount >= coupon.usageLimit) {
+  if (coupon.usageLimit && (coupon.usageCount ?? 0) >= coupon.usageLimit) {
     return {
       success: false,
       data: { valid: false, discountAmount: 0, message: 'This coupon has reached its usage limit.' },
@@ -360,8 +360,8 @@ export const validateCoupon = async (
 
   let discountAmount =
     coupon.type === 'percentage'
-      ? (cartTotal * coupon.value) / 100
-      : coupon.value;
+      ? (cartTotal * (coupon.value ?? 0)) / 100
+      : (coupon.value ?? 0);
 
   if (coupon.maxDiscountAmount) {
     discountAmount = Math.min(discountAmount, coupon.maxDiscountAmount);
@@ -402,15 +402,15 @@ export const checkout = async (
   if (data.couponCode) {
     const validation = await validateCoupon(
       data.couponCode,
-      sessionCart.subtotal,
+      sessionCart.subtotal ?? 0,
     );
     if (validation.data?.valid) {
-      discount = validation.data.discountAmount;
+      discount = validation.data.discountAmount ?? 0;
     }
   }
 
   const orderId = generateId('order');
-  const newOrder: Order = {
+  const newOrder: any = {
     id: orderId,
     userId: user.id,
     user,
@@ -425,7 +425,7 @@ export const checkout = async (
     })),
     subtotal: sessionCart.subtotal,
     discountAmount: discount,
-    total: Math.max(0, sessionCart.subtotal - discount),
+    total: Math.max(0, (sessionCart.subtotal ?? 0) - discount),
     currency: 'USD',
     couponCode: data.couponCode,
     orderStatus: 'paid',
@@ -436,7 +436,7 @@ export const checkout = async (
     billingAddress: data.billingAddress,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  } as Order & { billingAddress?: CheckoutPayload['billingAddress'] };
+  } as unknown as Order & { billingAddress?: CheckoutPayload['billingAddress'] };
 
   mockOrders.push(newOrder);
 
@@ -538,8 +538,8 @@ export const getInvoice = async (
   return {
     success: true,
     data: {
-      invoiceNumber: order.invoiceId ?? `INV-${order.id}`,
-      downloadUrl: `/mock/invoices/${order.invoiceId}.pdf`,
+      invoiceNumber: (order as any).invoiceId ?? `INV-${order.id}`,
+      downloadUrl: `/mock/invoices/${(order as any).invoiceId}.pdf`,
     },
   };
 };
@@ -587,7 +587,7 @@ export const requestDownloadLink = async (
     return { success: false, data: null, message: 'Download not found or not authorised.' };
   }
 
-  if (download.downloadCount >= download.downloadLimit) {
+  if ((download.downloadCount ?? 0) >= (download.downloadLimit ?? 0)) {
     return {
       success: false,
       data: null,
@@ -596,7 +596,7 @@ export const requestDownloadLink = async (
   }
 
   // Increment mock counter
-  download.downloadCount += 1;
+  download.downloadCount = (download.downloadCount ?? 0) + 1;
 
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 minutes
   const signedToken = `mock_signed_${generateId('dl')}`;
@@ -649,10 +649,10 @@ export const createTicket = async (
   await randomDelay();
   const user = requireAuth();
 
-  const newTicket: SupportTicket = {
+  const newTicket: any = {
     id: generateId('ticket'),
     userId: user.id,
-    user,
+    user: user as any,
     subject: data.subject,
     message: data.message,
     status: 'open',
@@ -715,10 +715,10 @@ export const replyToTicket = async (
   }
 
   const now = new Date().toISOString();
-  const updatedTicket: SupportTicket = {
+  const updatedTicket: any = {
     ...ticket,
     replies: [
-      ...ticket.replies,
+      ...((ticket as any).replies || []),
       {
         id: generateId('reply'),
         ticketId: id,

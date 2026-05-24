@@ -1,11 +1,17 @@
 import type {
-  OrderStatus,
-  PaymentStatus,
   SupportTicket,
-  TicketStatus,
 } from "@digital-market/shared-types";
 
-export const orderTone: Record<OrderStatus, "success" | "warn" | "danger"> = {
+type UiOrderStatus = "paid" | "pending" | "processing" | "cancelled" | "refunded";
+type UiPaymentStatus = "paid" | "pending" | "failed" | "refunded";
+type UiTicketStatus =
+  | "open"
+  | "in_progress"
+  | "waiting_on_customer"
+  | "resolved"
+  | "closed";
+
+export const orderTone: Record<UiOrderStatus, "success" | "warn" | "danger"> = {
   paid: "success",
   pending: "warn",
   processing: "warn",
@@ -14,7 +20,7 @@ export const orderTone: Record<OrderStatus, "success" | "warn" | "danger"> = {
 };
 
 export const paymentTone: Record<
-  PaymentStatus,
+  UiPaymentStatus,
   "success" | "warn" | "danger"
 > = {
   paid: "success",
@@ -24,7 +30,7 @@ export const paymentTone: Record<
 };
 
 export const ticketTone: Record<
-  TicketStatus,
+  UiTicketStatus,
   "success" | "warn" | "danger" | "ink"
 > = {
   open: "ink",
@@ -34,7 +40,7 @@ export const ticketTone: Record<
   closed: "danger",
 };
 
-export const ticketLabel: Record<TicketStatus, string> = {
+export const ticketLabel: Record<UiTicketStatus, string> = {
   open: "Open",
   in_progress: "In progress",
   waiting_on_customer: "Waiting on you",
@@ -51,6 +57,14 @@ export const priorityTone: Record<
   high: "danger",
   urgent: "danger",
 };
+
+export function getTicketTone(status: string): "success" | "warn" | "danger" | "ink" {
+  return ticketTone[status as UiTicketStatus] ?? "ink";
+}
+
+export function getTicketLabel(status: string): string {
+  return ticketLabel[status as UiTicketStatus] ?? formatStatusLabel(status);
+}
 
 export function formatDate(value: string): string {
   return new Date(value).toLocaleDateString(undefined, {

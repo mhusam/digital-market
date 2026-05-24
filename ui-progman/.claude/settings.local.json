@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm tsc *)",
+      "Bash(xargs sed *)",
+      "Bash(node *)",
+      "WebFetch(domain:magicui.design)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh api *)",
+      "Bash(python3 -m json.tool)",
+      "Bash(npx tsc *)",
+      "Bash(pnpm --filter ui-customer type-check)",
+      "Bash(tsc --noEmit)"
+    ]
+  }
+}

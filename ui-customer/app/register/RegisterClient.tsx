@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { register as registerCustomer } from "@digital-market/api-client";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { AuthShell } from "../../components/account/AuthShell";
-import { Button } from "../../components/ui/Button";
 import { useAuthStore } from "../../store/authStore";
 import { toast } from "../../store/toastStore";
-
-const INPUT_CLASS =
-  "mt-1.5 h-12 w-full rounded-2xl border-2 border-transparent bg-[#F8FBFF] px-4 text-sm font-bold text-[#1B1B1B] focus:border-[#1B1B1B]";
 
 export function RegisterClient({ nextPath }: { nextPath: string }) {
   const router = useRouter();
@@ -25,21 +24,14 @@ export function RegisterClient({ nextPath }: { nextPath: string }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (hydrated && isAuthenticated) {
-      router.replace(nextPath);
-    }
+    if (hydrated && isAuthenticated) router.replace(nextPath);
   }, [hydrated, isAuthenticated, nextPath, router]);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setLoading(true);
-    const response = await registerCustomer({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
+    const response = await registerCustomer({ firstName, lastName, email, password });
     setLoading(false);
 
     if (!response.success || !response.data) {
@@ -50,96 +42,53 @@ export function RegisterClient({ nextPath }: { nextPath: string }) {
     }
 
     commitLogin(response.data.user);
-    toast.success("Account created", "Your Forge customer area is ready.");
+    toast.success("Account created", "Your customer area is ready.");
     router.push(nextPath);
   };
 
   return (
     <AuthShell
-      eyebrow="Register"
-      title="Create a customer account that owns your purchases."
-      description="New customer accounts start clean so you can review empty-state behavior for orders, downloads, and support before backend integration."
+      eyebrow="Create account"
+      title="Start a simple customer account."
+      description="Save purchases, downloads, support history, and profile details in one place."
       footer={
         <span>
           Already have an account?{" "}
-          <Link href="/login" className="font-black text-[#1B1B1B] underline underline-offset-4">
-            Sign in
+          <Link href="/login" className="font-medium text-primary">
+            Login
           </Link>
         </span>
       }
     >
-      <form onSubmit={onSubmit} className="space-y-5">
-        <div>
-          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
-            Create account
-          </p>
-          <h2 className="mt-2 text-3xl font-black tracking-[-0.03em]">
-            Start your Forge account
-          </h2>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block">
-            <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
-              First name
-            </span>
-            <input
-              value={firstName}
-              onChange={(event) => setFirstName(event.target.value)}
-              className={INPUT_CLASS}
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
-              Last name
-            </span>
-            <input
-              value={lastName}
-              onChange={(event) => setLastName(event.target.value)}
-              className={INPUT_CLASS}
-              required
-            />
-          </label>
-        </div>
-
-        <label className="block">
-          <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
-            Email
-          </span>
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className={INPUT_CLASS}
-            required
-          />
-        </label>
-
-        <label className="block">
-          <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
-            Password
-          </span>
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className={INPUT_CLASS}
-            minLength={6}
-            placeholder="At least 6 characters"
-            required
-          />
-        </label>
-
-        {error && (
-          <div className="rounded-2xl border border-[#2563EB]/25 bg-[#EEF4FF] px-4 py-3 text-[13px] font-semibold text-[#1E3A8A]">
-            {error}
+      <form onSubmit={onSubmit}>
+        <FieldGroup>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field>
+              <FieldLabel htmlFor="firstName">First name</FieldLabel>
+              <Input id="firstName" value={firstName} onChange={(event) => setFirstName(event.target.value)} required />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="lastName">Last name</FieldLabel>
+              <Input id="lastName" value={lastName} onChange={(event) => setLastName(event.target.value)} required />
+            </Field>
           </div>
-        )}
-
-        <Button type="submit" size="lg" fullWidth disabled={loading}>
-          {loading ? "Creating account..." : "Create account"}
-        </Button>
+          <Field>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={6} required />
+          </Field>
+          {error && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+          <Button type="submit" size="lg" fullWidth disabled={loading}>
+            {loading ? "Creating account..." : "Create account"}
+          </Button>
+        </FieldGroup>
       </form>
     </AuthShell>
   );

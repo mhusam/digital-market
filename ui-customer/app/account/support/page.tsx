@@ -4,24 +4,24 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createTicket, getOrders, getTickets } from "@digital-market/api-client";
 import type { Order, SupportTicket } from "@digital-market/shared-types";
-import { Badge } from "../../../components/ui/Badge";
-import { Button } from "../../../components/ui/Button";
-import { Card } from "../../../components/ui/Card";
-import { EmptyState } from "../../../components/ui/EmptyState";
-import { Skeleton } from "../../../components/ui/LoadingSkeleton";
-import { NativeSelect } from "../../../components/ui/NativeSelect";
+import { Badge } from "../../../components/ui/badge";
+import { Button } from "../../../components/ui/button";
+import { Card } from "../../../components/ui/card";
+import { EmptyState } from "../../../components/ui/app-empty-state";
+import { Skeleton } from "../../../components/ui/skeleton";
+import { NativeSelect } from "../../../components/ui/native-select";
 import {
   formatDate,
+  getTicketLabel,
+  getTicketTone,
   priorityTone,
-  ticketLabel,
-  ticketTone,
 } from "../../../lib/account";
 import { toast } from "../../../store/toastStore";
 
 const INPUT_CLASS =
-  "mt-1.5 h-12 w-full rounded-2xl border-2 border-transparent bg-[#F8FBFF] px-4 text-sm font-bold text-[#1B1B1B] focus:border-[#1B1B1B]";
+  "mt-1.5 h-12 w-full rounded-2xl border-2 border-transparent bg-muted/40 px-4 text-sm font-bold text-foreground focus:border-foreground";
 const TEXTAREA_CLASS =
-  "mt-1.5 min-h-[150px] w-full rounded-[24px] border-2 border-transparent bg-[#F8FBFF] px-4 py-3 text-sm font-semibold text-[#1B1B1B] focus:border-[#1B1B1B]";
+  "mt-1.5 min-h-[150px] w-full rounded-[24px] border-2 border-transparent bg-muted/40 px-4 py-3 text-sm font-semibold text-foreground focus:border-foreground";
 
 export default function AccountSupportPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -84,7 +84,7 @@ export default function AccountSupportPage() {
     <div className="space-y-6">
       <Card className="p-6 md:p-7">
         <div className="max-w-2xl">
-          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+          <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
             Support
           </p>
           <h2 className="mt-2 text-3xl font-black tracking-[-0.03em]">
@@ -94,7 +94,7 @@ export default function AccountSupportPage() {
 
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <label className="block">
-            <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
+            <span className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
               Subject
             </span>
             <input
@@ -135,7 +135,7 @@ export default function AccountSupportPage() {
           </div>
 
           <label className="block">
-            <span className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/60">
+            <span className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
               Message
             </span>
             <textarea
@@ -155,7 +155,7 @@ export default function AccountSupportPage() {
       <Card className="p-6 md:p-7">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
+            <p className="text-[12px] font-black uppercase tracking-[0.14em] text-muted-foreground">
               Ticket history
             </p>
             <h3 className="mt-2 text-2xl font-black tracking-[-0.03em]">
@@ -174,21 +174,21 @@ export default function AccountSupportPage() {
               <Link
                 key={ticket.id}
                 href={`/account/support/${ticket.id}`}
-                className="block rounded-[28px] border border-[#1B1B1B]/7 bg-[#F8FBFF] px-5 py-4 transition-colors hover:bg-[#F8FBFF]"
+                className="block rounded-[28px] border border-border bg-muted/40 px-5 py-4 transition-colors hover:bg-muted/40"
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge tone={ticketTone[ticket.status]}>
-                    {ticketLabel[ticket.status]}
+                  <Badge tone={getTicketTone(ticket.status)}>
+                    {getTicketLabel(ticket.status)}
                   </Badge>
                   <Badge tone={priorityTone[ticket.priority]}>{ticket.priority}</Badge>
-                  <span className="text-[11px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/42">
+                  <span className="text-[11px] font-black uppercase tracking-[0.14em] text-muted-foreground">
                     Updated {formatDate(ticket.updatedAt)}
                   </span>
                 </div>
                 <h4 className="mt-3 text-lg font-black tracking-[-0.02em]">
                   {ticket.subject}
                 </h4>
-                <p className="mt-2 text-sm font-semibold text-[#1B1B1B]/68 line-clamp-2">
+                <p className="mt-2 text-sm font-semibold text-muted-foreground line-clamp-2">
                   {ticket.message}
                 </p>
               </Link>

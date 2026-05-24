@@ -14,7 +14,8 @@ import java.util.Set;
 public class StoreSettingsController {
 
     private static final Set<String> PUBLIC_KEYS = Set.of(
-            "store.name", "store.tagline", "legal.terms", "legal.privacy", "legal.refunds",
+            "store.name", "store.tagline", "store.currency", "store.contact-email",
+            "legal.terms", "legal.privacy", "legal.refunds",
             "bank.enabled", "bank.details", "bank.reference-hint"
     );
 

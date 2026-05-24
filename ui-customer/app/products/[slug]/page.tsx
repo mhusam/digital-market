@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProduct, getProducts } from "@digital-market/api-client";
-import { Breadcrumb } from "../../../components/ui/Breadcrumb";
+import { Breadcrumb } from "../../../components/ui/route-breadcrumb";
 import { ProductCover } from "../../../components/products/ProductCover";
 import { StarRating } from "../../../components/ui/StarRating";
-import { Badge } from "../../../components/ui/Badge";
+import { Badge } from "../../../components/ui/badge";
 import { ProductCard } from "../../../components/products/ProductCard";
 import { ProductDetailActions } from "./ProductDetailActions";
 import { ProductDetailTabs } from "./ProductDetailTabs";
@@ -26,6 +26,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const hasSale =
     typeof product.salePrice === "number" && product.salePrice < product.price;
+  const rating = product.rating ?? 0;
+  const reviewCount = product.reviewCount ?? 0;
+  const salesCount = product.salesCount ?? 0;
+  const technologies = product.technologies ?? [];
 
   return (
     <div className="max-w-[1280px] mx-auto px-5 md:px-8 pt-8 pb-20">
@@ -40,14 +44,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
       <div className="mt-6 grid lg:grid-cols-12 gap-8 lg:gap-12">
         {/* Gallery */}
         <div className="lg:col-span-7">
-          <div className="bg-white rounded-3xl p-4 md:p-6 border border-[#1B1B1B]/5 shadow-[0_20px_50px_-20px_rgba(17,24,39,0.25)]">
+          <div className="bg-card rounded-3xl p-4 md:p-6 border border-border shadow-[0_20px_50px_-20px_rgba(17,24,39,0.25)]">
             <ProductCover seed={product.id} title={product.title} size="lg" />
             <div className="grid grid-cols-4 gap-3 mt-4">
               {[0, 1, 2, 3].map((i) => (
                 <div
                   key={i}
                   className={`rounded-2xl overflow-hidden cursor-pointer border-2 ${
-                    i === 0 ? "border-[#1B1B1B]" : "border-transparent opacity-75"
+                    i === 0 ? "border-foreground" : "border-transparent opacity-75"
                   }`}
                 >
                   <ProductCover seed={`${product.id}-${i}`} title={product.title} size="sm" rounded="rounded-none" />
@@ -65,7 +69,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         {/* Sidebar */}
         <aside className="lg:col-span-5">
           <div className="sticky top-24 space-y-5">
-            <div className="bg-white rounded-3xl p-6 md:p-7 border border-[#1B1B1B]/5 shadow-[0_18px_40px_-20px_rgba(17,24,39,0.25)]">
+            <div className="bg-card rounded-3xl p-6 md:p-7 border border-border shadow-[0_18px_40px_-20px_rgba(17,24,39,0.25)]">
               <div className="flex items-center gap-2 flex-wrap mb-3">
                 <Badge tone="warn">{product.category?.name ?? "Digital"}</Badge>
                 {product.featured && <Badge tone="ink">★ Featured</Badge>}
@@ -85,13 +89,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 {product.title}
               </h1>
               <div className="mt-3 flex items-center gap-3">
-                <StarRating value={product.rating} showValue reviewCount={product.reviewCount} />
-                <span className="text-[13px] font-bold text-[#1B1B1B]/60">
-                  • {formatCompact(product.salesCount)} sold
+                <StarRating value={rating} showValue reviewCount={reviewCount} />
+                <span className="text-[13px] font-bold text-muted-foreground">
+                  • {formatCompact(salesCount)} sold
                 </span>
               </div>
-              <p className="mt-4 text-[15px] text-[#1B1B1B]/75 font-medium leading-relaxed">
-                {product.shortDescription}
+              <p className="mt-4 text-[15px] text-muted-foreground font-medium leading-relaxed">
+                {product.shortDescription ?? "A premium digital product crafted for modern teams."}
               </p>
 
               <div className="mt-5 flex items-baseline gap-3">
@@ -99,7 +103,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   {formatPrice(product.salePrice ?? product.price)}
                 </span>
                 {hasSale && (
-                  <span className="text-lg font-semibold text-[#1B1B1B]/45 line-through">
+                  <span className="text-lg font-semibold text-muted-foreground line-through">
                     {formatPrice(product.price)}
                   </span>
                 )}
@@ -107,7 +111,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
               <ProductDetailActions product={product} />
 
-              <div className="mt-5 pt-5 border-t border-[#1B1B1B]/10 grid grid-cols-3 gap-3 text-center">
+              <div className="mt-5 pt-5 border-t border-border grid grid-cols-3 gap-3 text-center">
                 <Stat icon={<Download size={16} />} label="Instant" sub="delivery" />
                 <Stat icon={<ShieldCheck size={16} />} label="Lifetime" sub="updates" />
                 <Stat icon={<Code2 size={16} />} label="Full" sub="source code" />
@@ -119,22 +123,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 href={product.demoUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="btn-pill bg-white text-[#1B1B1B] w-full h-12 text-sm border-2 border-[#1B1B1B]/10"
+                className="btn-pill bg-card text-foreground w-full h-12 text-sm border-2 border-border"
               >
                 <Eye size={15} strokeWidth={2.6} />
                 Live demo
               </Link>
             )}
 
-            <div className="bg-[#1B1B1B] text-white rounded-3xl p-6">
-              <h4 className="font-black text-base text-[#1E5FAF] mb-3">
+            <div className="bg-foreground text-primary-foreground rounded-3xl p-6">
+              <h4 className="font-black text-base text-primary mb-3">
                 Technologies
               </h4>
               <div className="flex flex-wrap gap-1.5">
-                {product.technologies.map((t) => (
+                {technologies.map((t) => (
                   <span
                     key={t}
-                    className="px-3 h-8 inline-flex items-center rounded-full bg-white/10 text-white text-[12px] font-bold"
+                    className="px-3 h-8 inline-flex items-center rounded-full bg-card/10 text-primary-foreground text-[12px] font-bold"
                   >
                     {t}
                   </span>
@@ -178,11 +182,11 @@ function Stat({
 }) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="w-9 h-9 rounded-full bg-[#EAF3FF] inline-flex items-center justify-center">
+      <span className="w-9 h-9 rounded-full bg-accent inline-flex items-center justify-center">
         {icon}
       </span>
       <span className="font-black text-[13px] tracking-[-0.02em] mt-1">{label}</span>
-      <span className="text-[11px] font-bold text-[#1B1B1B]/55">{sub}</span>
+      <span className="text-[11px] font-bold text-muted-foreground">{sub}</span>
     </div>
   );
 }

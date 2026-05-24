@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useEffect } from "react";
 import {
-  BadgeCheck,
   Download,
   LifeBuoy,
   LogOut,
@@ -12,12 +11,12 @@ import {
   Settings2,
   UserCircle2,
 } from "lucide-react";
-import { useAuthStore } from "../../store/authStore";
-import { Button, LinkButton } from "../ui/Button";
-import { Card } from "../ui/Card";
-import { Skeleton } from "../ui/LoadingSkeleton";
-import { toast } from "../../store/toastStore";
 import { formatDate } from "../../lib/account";
+import { toast } from "../../store/toastStore";
+import { useAuthStore } from "../../store/authStore";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 const ACCOUNT_LINKS = [
   { href: "/account", label: "Overview", Icon: UserCircle2 },
@@ -47,78 +46,56 @@ export function AccountShell({ children }: { children: ReactNode }) {
 
   if (!hydrated || !isAuthenticated || !user) {
     return (
-      <div className="max-w-[1280px] mx-auto px-5 md:px-8 pt-8 pb-20">
-        <div className="grid gap-6 lg:grid-cols-[280px,1fr]">
-          <Skeleton className="h-80 rounded-[32px]" />
-          <Skeleton className="h-[540px] rounded-[32px]" />
+      <div className="page-container py-10">
+        <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
+          <Skeleton className="h-64" />
+          <Skeleton className="h-[520px]" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-[1280px] mx-auto px-5 md:px-8 pt-8 pb-20">
-      <section className="rounded-[36px] border border-[#1B1B1B]/8 bg-white/80 shadow-[0_24px_60px_-24px_rgba(17,24,39,0.2)] px-6 py-8 md:px-8 md:py-9">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <span className="eyebrow">Customer Account</span>
-            <h1 className="mt-4 text-4xl md:text-5xl font-black tracking-[-0.04em]">
-              {user.firstName}, your digital products stay
-              <span className="font-hand text-[#0EA5E9] text-3xl md:text-4xl ml-2">
-                organized here
-              </span>
+    <div className="page-container py-8 md:py-10">
+      <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="font-hand text-2xl text-primary">Customer account</p>
+            <h1 className="mt-2 text-3xl font-extrabold text-foreground md:text-4xl">
+              Welcome, {user.firstName}
             </h1>
-            <p className="mt-4 text-[#1B1B1B]/72 font-semibold max-w-2xl">
-              Track orders, reclaim downloads, update billing details, and keep
-              support requests moving without leaving the storefront.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Manage orders, downloads, support, and profile details from one
+              simple account area.
             </p>
           </div>
-          <Card className="p-5 md:p-6 min-w-[280px]">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
-                  Account health
-                </p>
-                <p className="mt-2 text-xl font-black tracking-[-0.03em]">
-                  {user.displayName}
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[#1B1B1B]/65">
-                  {user.email}
-                </p>
-              </div>
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF3FF]">
-                <BadgeCheck size={22} strokeWidth={2.6} />
-              </div>
-            </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <span className="rounded-full bg-[#1B1B1B] px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#1E5FAF]">
-                {user.emailVerified ? "Email verified" : "Verify email"}
-              </span>
-              <span className="rounded-full bg-[#EAF3FF] px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#1B1B1B]">
-                Joined {formatDate(user.createdAt)}
-              </span>
-            </div>
-          </Card>
+          <div className="rounded-lg border border-border bg-muted/40 p-4">
+            <p className="text-sm font-extrabold text-foreground">{user.displayName}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{user.email}</p>
+            <p className="mt-2 text-xs font-semibold text-muted-foreground">
+              Joined {formatDate(user.createdAt)}
+            </p>
+          </div>
         </div>
       </section>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[280px,1fr] lg:items-start">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr] lg:items-start">
         <aside className="space-y-4">
-          <Card className="p-4">
-            <nav className="space-y-1.5" aria-label="Account navigation">
+          <Card className="p-3">
+            <nav className="space-y-1" aria-label="Account navigation">
               {ACCOUNT_LINKS.map(({ href, label, Icon }) => {
                 const active = isActivePath(pathname, href);
                 return (
                   <Link
                     key={href}
                     href={href}
-                    className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-colors ${
+                    className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold ${
                       active
-                        ? "bg-[#1B1B1B] text-[#1E5FAF]"
-                        : "bg-transparent text-[#1B1B1B]/74 hover:bg-[#F8FBFF] hover:text-[#1B1B1B]"
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
                     }`}
                   >
-                    <Icon size={16} strokeWidth={2.6} />
+                    <Icon size={16} />
                     {label}
                   </Link>
                 );
@@ -126,35 +103,27 @@ export function AccountShell({ children }: { children: ReactNode }) {
             </nav>
           </Card>
 
-          <Card className="p-5">
-            <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[#1B1B1B]/55">
-              Quick actions
-            </p>
-            <div className="mt-4 space-y-2">
-              <LinkButton
-                href="/products"
-                variant="light"
-                size="md"
-                fullWidth
-                className="justify-between border border-[#1B1B1B]/8"
-              >
-                Browse new products
-                <span aria-hidden>→</span>
-              </LinkButton>
-              <Button
-                variant="outline"
-                size="md"
-                fullWidth
-                onClick={() => {
-                  logout();
-                  toast.info("Signed out", "Your mock account session has been cleared.");
-                  router.push("/");
-                }}
-              >
-                <LogOut size={15} strokeWidth={2.6} />
-                Logout
-              </Button>
-            </div>
+          <Card className="space-y-2 p-3">
+            <Button
+              render={<Link href="/products" />}
+              variant="light"
+              fullWidth
+              className="justify-center"
+            >
+              Browse products
+            </Button>
+            <Button
+              variant="outline"
+              fullWidth
+              onClick={() => {
+                logout();
+                toast.info("Signed out", "Your customer session was cleared.");
+                router.push("/");
+              }}
+            >
+              <LogOut size={16} />
+              Logout
+            </Button>
           </Card>
         </aside>
 

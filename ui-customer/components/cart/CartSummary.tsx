@@ -21,53 +21,51 @@ export function CartSummary({
   couponCode,
   total,
   ctaHref = "/checkout",
-  ctaLabel = "Continue to Checkout",
+  ctaLabel = "Continue to checkout",
   onCheckout,
   loading,
   showCheckout = true,
 }: CartSummaryProps) {
   return (
-    <div className="bg-[#1B1B1B] text-[#F8FBFF] rounded-3xl p-6 md:p-7 sticky top-24">
-      <h3 className="text-xs font-black uppercase tracking-[0.18em] text-[#1E5FAF] mb-4">
-        Order Summary
-      </h3>
-      <dl className="space-y-3 text-[15px] font-semibold">
+    <div className="rounded-lg border border-border bg-card p-5 shadow-sm lg:sticky lg:top-20">
+      <h2 className="text-lg font-extrabold text-foreground">Order summary</h2>
+      <dl className="mt-4 space-y-3 text-sm">
         <Row label="Subtotal" value={formatPrice(subtotal)} />
         {discount > 0 && (
           <Row
             label={`Discount${couponCode ? ` (${couponCode})` : ""}`}
             value={`-${formatPrice(discount)}`}
-            tone="coral"
+            tone="success"
           />
         )}
-        <div className="border-t border-white/15 pt-3 mt-3 flex items-baseline justify-between">
-          <dt className="font-black text-base">Total</dt>
-          <dd className="font-black text-3xl tracking-[-0.03em] text-[#1E5FAF]">
+        <div className="flex items-center justify-between border-t border-border pt-3">
+          <dt className="font-extrabold text-foreground">Total</dt>
+          <dd className="text-2xl font-extrabold text-foreground">
             {formatPrice(total)}
           </dd>
         </div>
       </dl>
+
       {showCheckout &&
         (onCheckout ? (
           <button
+            type="button"
             onClick={onCheckout}
             disabled={loading}
-            className="btn-pill bg-[#1E5FAF] text-[#1B1B1B] hover:bg-[#164B89] w-full h-12 text-sm mt-6 disabled:opacity-60"
+            className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
           >
-            {loading ? "Processing…" : ctaLabel}
+            {loading ? "Processing" : ctaLabel}
           </button>
         ) : (
           <Link
             href={ctaHref}
-            className="btn-pill bg-[#1E5FAF] text-[#1B1B1B] hover:bg-[#164B89] w-full h-12 text-sm mt-6"
+            className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90"
           >
             {ctaLabel}
-            <span aria-hidden>→</span>
           </Link>
         ))}
-      <p className="text-[12px] text-white/55 mt-4 font-semibold leading-relaxed">
-        Secure checkout. Instant delivery. Lifetime updates included with every
-        purchase.
+      <p className="mt-4 text-sm leading-6 text-muted-foreground">
+        Secure mock checkout. Downloads unlock immediately after payment.
       </p>
     </div>
   );
@@ -80,16 +78,12 @@ function Row({
 }: {
   label: string;
   value: string;
-  tone?: "coral";
+  tone?: "success";
 }) {
   return (
-    <div className="flex items-baseline justify-between">
-      <dt className="text-white/75">{label}</dt>
-      <dd
-        className={`font-black ${
-          tone === "coral" ? "text-[#0EA5E9]" : "text-white"
-        }`}
-      >
+    <div className="flex items-center justify-between">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className={`font-extrabold ${tone === "success" ? "text-emerald-600 dark:text-emerald-300" : "text-foreground"}`}>
         {value}
       </dd>
     </div>

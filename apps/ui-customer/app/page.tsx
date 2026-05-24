@@ -1,31 +1,31 @@
 import Link from "next/link";
 import { PageChrome, type HighlightCard } from "./_components/page-chrome";
 
-const stackItems = ["React", "Next", "TS", "API"];
+const stackItems = ["Spring Boot", "Next.js", "Java", "Python", "Cloud"];
 
 const previewCards: HighlightCard[] = [
   {
-    label: "Products",
-    value: "2,500+",
-    detail: "Curated kits, APIs, and templates",
+    label: "Catalog",
+    value: "Live",
+    detail: "Products, projects, and IT solutions",
     position: "card-products",
   },
   {
-    label: "Checkout",
-    value: "Ready",
-    detail: "Cart, payment, success flow",
+    label: "Payments",
+    value: "PayPal",
+    detail: "Secure checkout with bank-transfer fallback",
     position: "card-creators",
   },
   {
-    label: "Licenses",
+    label: "Delivery",
     value: "Instant",
-    detail: "Access delivered at checkout",
+    detail: "Downloads and references available after payment",
     position: "card-licenses",
   },
   {
-    label: "Orders",
-    value: "Tracked",
-    detail: "Reference IDs and history",
+    label: "Support",
+    value: "Fast",
+    detail: "Order confirmation and customer account tracking",
     position: "card-support",
   },
 ];
@@ -34,27 +34,26 @@ export default function Home() {
   return (
     <PageChrome
       ariaLabelledBy="hero-title"
-      footer="A focused customer marketplace shell: catalog, auth, cart, checkout, profile, and order tracking."
+      footer="PROGMAN customer storefront with full catalog, checkout, account, and digital fulfillment flows."
       highlights={previewCards}
       intro="home"
     >
-      <section className="hero" aria-label="DevMarket introduction">
+      <section className="hero" aria-label="PROGMAN introduction">
         <p className="eyebrow">
-          <span>New</span>
-          Minimal marketplace launchpad
+          <span>PROGMAN</span>
+          Digital IT store
         </p>
 
-        <h1 id="hero-title">
-          One page for developer products that feel ready.
-        </h1>
+        <h1 id="hero-title">Buy practical digital solutions, fast.</h1>
 
         <p className="hero-copy">
-          A focused storefront for vetted code, UI systems, licenses, and creator support. Built to feel quiet, fast, and easy to trust.
+          PROGMAN delivers production-ready code products, solution packs, and project assets with clear pricing,
+          calm UX, and reliable post-purchase delivery.
         </p>
 
         <div className="hero-actions" aria-label="Primary actions">
           <Link href="/catalog" className="button button-primary">
-            Browse Products
+            Browse Catalog
             <span aria-hidden="true">→</span>
           </Link>
           <Link href="/register" className="button button-secondary">
@@ -62,7 +61,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="stack-row" aria-label="Featured product stack">
+        <div className="stack-row" aria-label="Featured technology tags">
           {stackItems.map((item) => (
             <span key={item}>{item}</span>
           ))}

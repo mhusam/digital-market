@@ -47,8 +47,9 @@ public class PaymentsService implements PaymentsFacade {
 
         OrderDto order = ordering.getOrder(orderId);
         String token = paypal.getAccessToken();
+        String paypalReturnUrl = returnUrl + "?orderId=" + orderId + "&confirmationToken=" + order.confirmationToken();
         JsonNode result = paypal.createOrder(token, order.currency(),
-                order.totalAmount().toPlainString(), returnUrl + "?orderId=" + orderId, cancelUrl);
+                order.totalAmount().toPlainString(), paypalReturnUrl, cancelUrl);
 
         String paypalOrderId = result.get("id").asText();
         String approvalUrl = result.get("links").elements().next().get("href").asText();

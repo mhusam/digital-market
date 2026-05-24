@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans, Caveat } from "next/font/google";
-import "./globals.css";
-import { Navbar } from "../components/layout/Navbar";
+import { Audiowide, Caveat, DM_Sans } from "next/font/google";
 import { Footer } from "../components/layout/Footer";
-import { BgShapes } from "../components/layout/BgShapes";
-import { ToastContainer } from "../components/ui/Toast";
+import { Navbar } from "../components/layout/Navbar";
+import { ThemeProvider } from "../components/theme-provider";
+import { Toaster } from "../components/ui/sonner";
+import "./globals.css";
 
 const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -20,10 +20,20 @@ const caveat = Caveat({
   display: "swap",
 });
 
+const audiowide = Audiowide({
+  variable: "--font-brand",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Forge — Premium Digital Products",
+  title: "PROGMAN - Simple Digital Products",
   description:
-    "Forge is the marketplace for premium digital products. Curated themes, plugins, UI kits, and code, ready to download.",
+    "A simple marketplace for digital products, templates, starter kits, and creator tools.",
+  icons: {
+    icon: "/logo-2.svg",
+  },
 };
 
 export const viewport: Viewport = {
@@ -37,20 +47,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${dmSans.variable} ${caveat.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col relative">
-        <BgShapes />
-        <Navbar />
-        <main className="flex-1 relative z-10 pt-16 md:pl-[78px] md:pt-0">
-          {children}
-        </main>
-        <div className="relative z-10 md:pl-[78px]">
+    <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${caveat.variable} ${audiowide.variable} font-sans`}>
+      <body className="flex min-h-screen flex-col">
+        <ThemeProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
           <Footer />
-        </div>
-        <ToastContainer />
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,72 +1,114 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Github, Twitter, Linkedin, Youtube } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
-const PRODUCT_LINKS = [
-  { href: "/products", label: "All Products" },
-  { href: "/categories/saas-solutions", label: "SaaS Kits" },
+const SHOP_LINKS = [
+  { href: "/products", label: "All products" },
+  { href: "/categories/saas-solutions", label: "SaaS kits" },
   { href: "/categories/dashboard-templates", label: "Dashboards" },
-  { href: "/categories/figma-kits", label: "Figma Kits" },
-];
-
-const COMPANY_LINKS = [
   { href: "/search", label: "Search" },
-  { href: "/cart", label: "Cart" },
-  { href: "/checkout", label: "Checkout" },
-  { href: "/login", label: "Login" },
 ];
 
-const BUYING_LINKS = [
-  { href: "/register", label: "Create Account" },
-  { href: "/account/orders", label: "My Orders" },
-  { href: "/account/downloads", label: "My Downloads" },
-  { href: "/account/support", label: "Support" },
+const ACCOUNT_LINKS = [
+  { href: "/login", label: "Login" },
+  { href: "/register", label: "Register" },
+  { href: "/cart", label: "Cart" },
+  { href: "/account/profile", label: "Profile" },
 ];
 
 export function Footer() {
   return (
-    <footer className="relative z-10 mt-24 border-t-2 border-[#1B1B1B]/15">
-      <div className="max-w-[1280px] mx-auto px-5 md:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          <div className="md:col-span-5">
-            <Link href="/" className="flex items-center gap-2.5 mb-5">
-              <span className="inline-flex items-center justify-center w-10 h-10 bg-[#1E40AF] text-white rounded-xl font-black text-xl">
-                ◆
-              </span>
-              <span className="text-[#1B1B1B] font-black text-3xl tracking-[-0.04em]">
-                Forge
-              </span>
-            </Link>
-            <p className="text-[#1B1B1B]/80 max-w-md text-[15px] leading-relaxed">
-              The marketplace for premium digital products. Hand-curated themes,
-              plugins, UI kits, and code, built by developers, for developers.
-            </p>
-            <div className="flex items-center gap-2 mt-6">
-              {[
-                { Icon: Twitter, label: "Twitter" },
-                { Icon: Github, label: "GitHub" },
-                { Icon: Linkedin, label: "LinkedIn" },
-                { Icon: Youtube, label: "YouTube" },
-              ].map(({ Icon, label }) => (
-                <span
-                  key={label}
-                  aria-label={label}
-                  className="w-10 h-10 inline-flex items-center justify-center rounded-full bg-[#1E40AF] text-white"
-                >
-                  <Icon size={16} strokeWidth={2.4} />
-                </span>
-              ))}
-            </div>
-          </div>
+    <footer className="relative overflow-hidden border-t border-white/10 bg-[#08080a] text-neutral-400">
+      {/* Backdrop accent */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-32 top-0 h-[420px] w-[420px] rounded-full bg-[var(--accent-electric)] opacity-[0.10] blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 bottom-0 h-[360px] w-[360px] rounded-full bg-[var(--accent-violet)] opacity-[0.10] blur-3xl"
+      />
 
-          <FooterCol title="Products" links={PRODUCT_LINKS} />
-          <FooterCol title="Browse" links={COMPANY_LINKS} />
-          <FooterCol title="Collections" links={BUYING_LINKS} />
+      <div className="page-container relative py-16 md:py-20">
+        {/* Editorial top — giant wordmark */}
+        <div className="mb-14 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p className="font-hand text-2xl text-[var(--accent-electric)]">
+              Digital made simple.
+            </p>
+
+          </div>
+          <Link
+            href="/products"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white/5"
+          >
+            Enter the marketplace
+            <ArrowUpRight
+              size={15}
+              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
+          </Link>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-[#1B1B1B]/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-[#1B1B1B]/80 text-sm font-semibold">
-          <span>© {new Date().getFullYear()} Forge. All rights reserved.</span>
-          <span className="font-hand text-xl text-[#1B1B1B]">
-            Built for developers worldwide
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1.2fr] md:gap-8">
+          {/* Brand column */}
+          <div>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2.5 font-extrabold"
+            >
+              <Image
+                src="/logo-2.svg"
+                alt="PROGMAN logo"
+                width={32}
+                height={32}
+                className="size-8"
+              />
+              <span className="font-brand text-[1.08rem] tracking-[0.03em]">
+                PROGMAN
+              </span>
+            </Link>
+            <p className="mt-4 max-w-xs text-sm leading-6">
+              Curated digital products for creators, founders, and modern
+              teams. Hand-picked, never spammed.
+            </p>
+
+          </div>
+
+          <FooterColumn title="Shop" links={SHOP_LINKS} />
+          <FooterColumn title="Account" links={ACCOUNT_LINKS} />
+
+          {/* Newsletter column */}
+          <div>
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+              Stay in the loop
+            </h2>
+            <p className="mt-3 text-sm leading-6">
+              New drops, code kits, and product launches — once a week.
+            </p>
+            <form className="mt-5 flex gap-2">
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                className="min-w-0 border-white/15 bg-white/5 text-white placeholder:text-white/40"
+                aria-label="Email address"
+              />
+              <Button type="submit" className="bg-[var(--accent-electric)] text-white hover:bg-[var(--accent-electric)]/90">
+                Subscribe
+              </Button>
+            </form>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 text-xs font-medium uppercase tracking-[0.14em] md:flex-row md:items-center md:justify-between">
+          <span>
+            &copy; {new Date().getFullYear()} PROGMAN — All rights reserved.
+          </span>
+          <span className="text-white/40">
+            The complete developer universe, designed &amp; built for the next wave of builders.
           </span>
         </div>
       </div>
@@ -74,7 +116,7 @@ export function Footer() {
   );
 }
 
-function FooterCol({
+function FooterColumn({
   title,
   links,
 }: {
@@ -82,18 +124,22 @@ function FooterCol({
   links: { href: string; label: string }[];
 }) {
   return (
-    <div className="md:col-span-2">
-      <h4 className="text-[11px] font-black uppercase tracking-[0.18em] text-[#1B1B1B] mb-4">
+    <div>
+      <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-white">
         {title}
-      </h4>
-      <ul className="space-y-2.5">
-        {links.map((l) => (
-          <li key={l.href}>
+      </h2>
+      <ul className="mt-4 space-y-2.5">
+        {links.map((link) => (
+          <li key={link.href}>
             <Link
-              href={l.href}
-              className="text-[#1B1B1B]/80 hover:text-[#1B1B1B] hover:underline underline-offset-4 font-semibold text-[15px]"
+              href={link.href}
+              className="group inline-flex items-center gap-1.5 text-sm transition-colors hover:text-white"
             >
-              {l.label}
+              {link.label}
+              <ArrowUpRight
+                size={12}
+                className="opacity-0 transition-all group-hover:opacity-100"
+              />
             </Link>
           </li>
         ))}

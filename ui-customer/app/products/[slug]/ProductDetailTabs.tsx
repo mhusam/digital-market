@@ -13,18 +13,22 @@ interface Props {
 
 export function ProductDetailTabs({ product }: Props) {
   const [active, setActive] = useState<Tab>("Description");
+  const tags = product.tags ?? [];
+  const requirements = product.requirements ?? [];
+  const rating = product.rating ?? 0;
+  const reviewCount = product.reviewCount ?? 0;
 
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 border border-[#1B1B1B]/5 shadow-[0_18px_40px_-20px_rgba(17,24,39,0.18)]">
-      <div className="flex flex-wrap gap-1.5 border-b border-[#1B1B1B]/10 -mt-2 -mx-2 pb-3 mb-6 px-2">
+    <div className="bg-card rounded-3xl p-6 md:p-8 border border-border shadow-[0_18px_40px_-20px_rgba(17,24,39,0.18)]">
+      <div className="flex flex-wrap gap-1.5 border-b border-border -mt-2 -mx-2 pb-3 mb-6 px-2">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setActive(t)}
             className={`px-4 h-10 rounded-full font-black text-sm transition-colors ${
               active === t
-                ? "bg-[#1B1B1B] text-[#1E5FAF]"
-                : "text-[#1B1B1B]/70 hover:bg-[#EFF6FF] hover:text-[#1B1B1B]"
+                ? "bg-foreground text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
             }`}
           >
             {t}
@@ -34,15 +38,15 @@ export function ProductDetailTabs({ product }: Props) {
 
       {active === "Description" && (
         <div className="prose-forge">
-          <p className="text-[15px] leading-relaxed text-[#1B1B1B]/85 font-medium whitespace-pre-line">
-            {product.description}
+          <p className="text-[15px] leading-relaxed text-muted-foreground font-medium whitespace-pre-line">
+            {product.description ?? "No extended description provided for this product yet."}
           </p>
-          {product.tags.length > 0 && (
+          {tags.length > 0 && (
             <div className="mt-6 flex flex-wrap gap-1.5">
-              {product.tags.map((t) => (
+              {tags.map((t) => (
                 <span
                   key={t.id}
-                  className="px-3 h-8 inline-flex items-center rounded-full bg-[#EFF6FF] text-[#1B1B1B] text-[12px] font-bold"
+                  className="px-3 h-8 inline-flex items-center rounded-full bg-accent text-foreground text-[12px] font-bold"
                 >
                   #{t.name}
                 </span>
@@ -54,14 +58,14 @@ export function ProductDetailTabs({ product }: Props) {
 
       {active === "Requirements" && (
         <ul className="space-y-3">
-          {product.requirements.length === 0 && (
-            <li className="text-[#1B1B1B]/70 font-semibold">
+          {requirements.length === 0 && (
+            <li className="text-muted-foreground font-semibold">
               No special requirements. Just open and ship.
             </li>
           )}
-          {product.requirements.map((r, i) => (
+          {requirements.map((r, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full bg-[#14B8A6] text-white inline-flex items-center justify-center font-black text-[11px] flex-shrink-0 mt-0.5">
+              <span className="w-6 h-6 rounded-full bg-emerald-500 text-primary-foreground inline-flex items-center justify-center font-black text-[11px] flex-shrink-0 mt-0.5">
                 ✓
               </span>
               <span className="text-[15px] font-medium">{r}</span>
@@ -73,7 +77,7 @@ export function ProductDetailTabs({ product }: Props) {
       {active === "Changelog" && (
         <div className="space-y-5">
           <ChangelogEntry
-            version={product.version}
+            version={product.version ?? "1.0.0"}
             date={product.updatedAt}
             notes={[
               "Latest performance improvements",
@@ -97,23 +101,23 @@ export function ProductDetailTabs({ product }: Props) {
 
       {active === "Reviews" && (
         <div className="space-y-5">
-          <div className="flex items-center gap-6 pb-5 border-b border-[#1B1B1B]/10">
+          <div className="flex items-center gap-6 pb-5 border-b border-border">
             <div>
               <div className="text-5xl font-black tracking-[-0.04em]">
-                {product.rating.toFixed(1)}
+                {rating.toFixed(1)}
               </div>
-              <StarRating value={product.rating} size={16} />
-              <p className="text-[12px] font-bold text-[#1B1B1B]/60 mt-1">
-                {product.reviewCount} reviews
+              <StarRating value={rating} size={16} />
+              <p className="text-[12px] font-bold text-muted-foreground mt-1">
+                {reviewCount} reviews
               </p>
             </div>
             <div className="flex-1 space-y-1">
               {[5, 4, 3, 2, 1].map((s) => (
                 <div key={s} className="flex items-center gap-3">
                   <span className="text-[11px] font-bold w-3">{s}</span>
-                  <div className="flex-1 h-2 rounded-full bg-[#EFF6FF] overflow-hidden">
+                  <div className="flex-1 h-2 rounded-full bg-accent overflow-hidden">
                     <div
-                      className="h-full bg-[#1E5FAF]"
+                      className="h-full bg-primary"
                       style={{
                         width: `${s === 5 ? 72 : s === 4 ? 18 : s === 3 ? 7 : s === 2 ? 2 : 1}%`,
                       }}
@@ -137,9 +141,9 @@ export function ProductDetailTabs({ product }: Props) {
               b: "Loving the design system. A few small things I'd tweak but overall fantastic.",
             },
           ].map((r, i) => (
-            <article key={i} className="border-b border-[#1B1B1B]/10 pb-5 last:border-0">
+            <article key={i} className="border-b border-border pb-5 last:border-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#2563EB] text-white inline-flex items-center justify-center font-black">
+                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground inline-flex items-center justify-center font-black">
                   {r.n[0]}
                 </div>
                 <div>
@@ -148,7 +152,7 @@ export function ProductDetailTabs({ product }: Props) {
                 </div>
               </div>
               <h5 className="mt-3 font-black text-[15px]">{r.t}</h5>
-              <p className="text-[14px] text-[#1B1B1B]/75 font-medium mt-1">{r.b}</p>
+              <p className="text-[14px] text-muted-foreground font-medium mt-1">{r.b}</p>
             </article>
           ))}
         </div>
@@ -169,20 +173,20 @@ function ChangelogEntry({
   current?: boolean;
 }) {
   return (
-    <div className="border-l-2 border-[#1B1B1B]/15 pl-5 relative">
+    <div className="border-l-2 border-border pl-5 relative">
       <span
         className={`absolute -left-[7px] top-0 w-3 h-3 rounded-full ${
-          current ? "bg-[#0EA5E9]" : "bg-[#1B1B1B]/30"
+          current ? "bg-primary" : "bg-foreground/30"
         }`}
       />
       <div className="flex items-center gap-2">
         <span className="font-black text-lg">v{version}</span>
         {current && (
-          <span className="px-2 py-0.5 rounded-full bg-[#0EA5E9] text-white text-[10px] font-black uppercase tracking-[0.12em]">
+          <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.12em]">
             current
           </span>
         )}
-        <span className="text-[12px] font-bold text-[#1B1B1B]/55">
+        <span className="text-[12px] font-bold text-muted-foreground">
           {new Date(date).toLocaleDateString(undefined, {
             year: "numeric",
             month: "short",
@@ -190,7 +194,7 @@ function ChangelogEntry({
           })}
         </span>
       </div>
-      <ul className="mt-2 space-y-1 text-[14px] font-medium text-[#1B1B1B]/80">
+      <ul className="mt-2 space-y-1 text-[14px] font-medium text-muted-foreground">
         {notes.map((n, i) => (
           <li key={i}>— {n}</li>
         ))}

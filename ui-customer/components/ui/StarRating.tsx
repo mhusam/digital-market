@@ -28,7 +28,7 @@ export function StarRating({
             <span key={i} className="relative inline-block" style={{ width: size, height: size }}>
               <Star
                 size={size}
-                className="text-[#1B1B1B]/20 absolute inset-0"
+                className="text-muted-foreground absolute inset-0"
                 strokeWidth={2.2}
               />
               {(isFilled || isHalf) && (
@@ -38,7 +38,7 @@ export function StarRating({
                 >
                   <Star
                     size={size}
-                    className="text-[#0EA5E9] fill-[#0EA5E9]"
+                    className="fill-primary text-primary"
                     strokeWidth={2.2}
                   />
                 </span>
@@ -48,10 +48,10 @@ export function StarRating({
         })}
       </div>
       {showValue && (
-        <span className="text-[12px] font-black text-[#1B1B1B]">
+        <span className="text-[12px] font-black text-foreground">
           {value.toFixed(1)}
           {reviewCount !== undefined && (
-            <span className="text-[#1B1B1B]/60 font-semibold"> ({reviewCount})</span>
+            <span className="text-muted-foreground font-semibold"> ({reviewCount})</span>
           )}
         </span>
       )}

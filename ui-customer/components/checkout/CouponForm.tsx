@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Tag, CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, Tag, XCircle } from "lucide-react";
 import { validateCoupon } from "@digital-market/api-client";
 import { useCartStore } from "../../store/cartStore";
 
@@ -10,28 +10,28 @@ interface CouponFormProps {
 }
 
 export function CouponForm({ cartTotal }: CouponFormProps) {
-  const couponCode = useCartStore((s) => s.couponCode);
-  const apply = useCartStore((s) => s.applyDiscount);
-  const clear = useCartStore((s) => s.clearDiscount);
+  const couponCode = useCartStore((state) => state.couponCode);
+  const apply = useCartStore((state) => state.applyDiscount);
+  const clear = useCartStore((state) => state.clearDiscount);
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "err">("idle");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!code.trim()) return;
     setLoading(true);
     setStatus("idle");
     try {
-      const res = await validateCoupon(code.trim(), cartTotal);
-      if (res.data?.valid) {
-        apply(code.trim().toUpperCase(), res.data.discountAmount);
+      const response = await validateCoupon(code.trim(), cartTotal);
+      if (response.data?.valid) {
+        apply(code.trim().toUpperCase(), response.data.discountAmount ?? 0);
         setStatus("ok");
-        setMessage(res.data.message);
+        setMessage(response.data.message ?? "Coupon applied successfully.");
       } else {
         setStatus("err");
-        setMessage(res.data?.message ?? "Invalid coupon");
+        setMessage(response.data?.message ?? "Invalid coupon");
       }
     } finally {
       setLoading(false);
@@ -46,21 +46,22 @@ export function CouponForm({ cartTotal }: CouponFormProps) {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 border border-[#1B1B1B]/5">
-      <div className="flex items-center gap-2 mb-3">
-        <Tag size={15} strokeWidth={2.6} />
-        <h4 className="font-black tracking-[-0.02em]">Have a coupon?</h4>
+    <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+      <div className="mb-3 flex items-center gap-2">
+        <Tag size={16} />
+        <h2 className="font-extrabold text-foreground">Coupon</h2>
       </div>
 
       {couponCode ? (
-        <div className="flex items-center justify-between gap-3 bg-[#14B8A6]/15 text-[#1B1B1B] rounded-2xl px-4 py-3">
+        <div className="flex items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-primary">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={16} className="text-[#14B8A6]" strokeWidth={2.6} />
-            <span className="font-black text-sm">{couponCode} applied</span>
+            <CheckCircle2 size={16} />
+            <span className="text-sm font-bold">{couponCode} applied</span>
           </div>
           <button
+            type="button"
             onClick={onClear}
-            className="text-[12px] font-bold text-[#0EA5E9] hover:underline underline-offset-4"
+            className="text-sm font-bold text-primary hover:text-primary/80"
           >
             Remove
           </button>
@@ -69,30 +70,31 @@ export function CouponForm({ cartTotal }: CouponFormProps) {
         <form onSubmit={onSubmit} className="flex items-center gap-2">
           <input
             value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="Enter code"
-            className="flex-1 h-11 px-4 rounded-2xl bg-[#EFF6FF] font-bold text-sm border-2 border-transparent focus:border-[#1B1B1B] tracking-[0.06em]"
+            onChange={(event) => setCode(event.target.value.toUpperCase())}
+            placeholder="WELCOME10"
+            className="field-input"
           />
           <button
             type="submit"
             disabled={loading || !code.trim()}
-            className="btn-pill bg-[#1B1B1B] text-[#1E5FAF] h-11 px-5 text-[13px] disabled:opacity-50"
+            className="h-11 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
-            {loading ? "…" : "Apply"}
+            {loading ? "Applying" : "Apply"}
           </button>
         </form>
       )}
 
       {status === "err" && message && (
-        <p className="mt-2 flex items-center gap-1.5 text-[12px] font-bold text-[#0EA5E9]">
-          <XCircle size={13} strokeWidth={2.6} />
+        <p className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-destructive">
+          <XCircle size={14} />
           {message}
         </p>
       )}
+      {status === "ok" && message && !couponCode && (
+        <p className="mt-2 text-sm font-semibold text-primary">{message}</p>
+      )}
       {!couponCode && (
-        <p className="mt-3 text-[12px] text-[#1B1B1B]/55 font-semibold">
-          Try <span className="font-black text-[#1B1B1B]">WELCOME10</span> for 10% off.
-        </p>
+        <p className="mt-3 text-sm text-muted-foreground">Try WELCOME10 for 10% off.</p>
       )}
     </div>
   );
